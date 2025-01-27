@@ -149,8 +149,8 @@
                     .then(() => alert("Der Inhalt wurde erfolgreich in die Zwischenablage kopiert!"))
                     .catch((err) => alert("Fehler beim Kopieren: " + err));
             });
-			
-			// Per E-Mail senden-Funktion
+            
+            // Per E-Mail senden-Funktion
             emailButton.addEventListener('click', () => {
                 const contentDiv = document.getElementById(uniqueContentId);
                 const textToCopy = contentDiv.innerText || contentDiv.textContent;
@@ -166,23 +166,23 @@
                     second: '2-digit'
                 });
 
-				// Zwischenablage kopieren
-				navigator.clipboard.writeText(textToCopy)
-					.then(() => {
-						// Mailto-Link mit erster Zeile und Datum im Betreff und vollständigem Text im Body
-						const mailtoLink = `mailto:?subject=${encodeURIComponent(firstLine + ' - ' + formattedDate)}&body=${encodeURIComponent(textToCopy)}`;
-						window.location.href = mailtoLink;
-					})
-					.catch((err) => alert("Fehler beim Kopieren: " + err));
-			});
+                // Zwischenablage kopieren
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => {
+                        // Mailto-Link mit erster Zeile und Datum im Betreff und vollständigem Text im Body
+                        const mailtoLink = `mailto:?subject=${encodeURIComponent(firstLine + ' - ' + formattedDate)}&body=${encodeURIComponent(textToCopy)}`;
+                        window.location.href = mailtoLink;
+                    })
+                    .catch((err) => alert("Fehler beim Kopieren: " + err));
+            });
 
-			
+            
         }
 
         // Dynamischen Inhalt laden und Buttons hinzufügen
         (function () {
             const currentUrl = window.location.href;
-            const htmlContent = currentUrl.split('.html?&=')[1];
+            const htmlContent = currentUrl.split('.html?&=#')[1];
             const contentDiv = document.getElementById(uniqueContentId);
 
             // Skripte innerhalb des geladenen Inhalts ausführen
