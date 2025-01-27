@@ -3,36 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website</title>
+    <title>Dynamic HTML Loader</title>
 </head>
 <body>
-    <!-- Bereiche zur Anzeige der Parameter -->
-    <div>
-        <h2>Wert 1:</h2>
-        <p id="param1"></p>
-    </div>
-
-    <div>
-        <h2>Wert 2:</h2>
-        <p id="param2"></p>
-    </div>
-
+    <!-- Dynamischer Inhalt -->
+    <div id="6dfc24b9b228c9808d31b7f8afc5a06e892ffccedd9acbcf6c379b30f647882d"></div>
     <script>
-        // Funktion, um Parameter aus der URL zu extrahieren
-        function getUrlParameters() {
-            const urlParams = new URLSearchParams(window.location.search);
+        // Einzigartige Hashes für Elemente und Funktionen
+        const uniqueContentId = '6dfc24b9b228c9808d31b7f8afc5a06e892ffccedd9acbcf6c379b30f647882d';
+        const floatingContainerId = '0aafa35f7a0f5d6b3b87d76a76328f8d1dbf2565b37f618285e307fbef6cda0c';
 
-            // Extrahiere die Parameter und zeige sie an
-            const param1 = urlParams.get('param1'); // Der erste Parameter
-            const param2 = urlParams.get('param2'); // Der zweite Parameter
+        // Funktion zum Einfügen von schwebenden Buttons
+        function addFloatingButtons() {
+            // Schwebenden Container erstellen
+            const floatingContainer = document.createElement('div');
+            floatingContainer.id = floatingContainerId;
 
-            // Setze die Parameter-Werte in die entsprechenden Felder
-            document.getElementById('param1').textContent = param1 ? param1 : 'Kein Wert für param1';
-            document.getElementById('param2').textContent = param2 ? param2 : 'Kein Wert für param2';
+            // Shadow DOM erstellen, um Buttons komplett zu isolieren
+            const shadowRoot = floatingContainer.attachShadow({ mode: 'open' });
+
+            // HTML und CSS für die Buttons
+            shadowRoot.innerHTML = `
+                <style>
+                    /* Allgemeine Container-Styles */
+                    .container {
+                        position: fixed;
+                        z-index: 10000;
+                        display: flex;
+                        gap: 10px;
+                    }
+
+                    /* Vertikale Ausrichtung links oder rechts */
+                    .vertical {
+                        flex-direction: column;
+                        top: 20px;
+                        height: auto;
+                    }
+
+                    /* Horizontale Ausrichtung unten */
+                    .horizontal {
+                        flex-direction: row;
+                        bottom: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        width: auto;
+                    }
+
+                    /* Button-Styles */
+                    .button {
+                        all: unset;
+                        display: inline-block;
+                        padding: 10px 15px;
+                        font-size: 14px;
+                        font-family: Arial, sans-serif;
+                        color: #ffffff;
+                        background-color: #007bff;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        text-align: center;
+                        user-select: none;
+                        white-space: nowrap;
+                    }
+
+                    .button:hover {
+                        background-color: #0056b3;
+                    }
+                </style>
+                <div class="container vertical" id="buttonContainer">
+                    <button class="button" id="printButton">Drucken</button>
+                    <button class="button" id="copyButton">In Zwischenablage kopieren</button>
+                    <button class="button" id="emailButton">Per E-Mail senden</button>
+                    <button class="button" id="positionButton">Position wechseln</button>
+                </div>
+            `;
+
+            // Buttons zum DOM hinzufügen
+            document.body.appendChild(floatingContainer);
+
+            // Referenzen für Buttons und Container
+            const buttonContainer = shadowRoot.getElementById('buttonContainer');
+            const printButton = shadowRoot.getElementById('printButton');
+            const copyButton = shadowRoot.getElementById('copyButton');
+            const emailButton = shadowRoot.getElementById('emailButton');
+            const positionButton = shadowRoot.getElementById('positionButton');
+
+            // Positionslogik
+            const positions = [
+                { class: 'vertical', style: 'left: 20px;' },   // Vertikal links
+                { class: 'horizontal', style: '' },           // Horizontal unten
+                { class: 'vertical', style: 'right: 20px;' }  // Vertikal rechts
+            ];
+            let currentPosition = 0;
+
+            const updatePosition = () => {
+                const { class: positionClass, style } = positions[currentPosition];
+                buttonContainer.className = `container ${positionClass}`;
+                buttonContainer.style.cssText = style;
+            };
+
+            positionButton.addEventListener('click', () => {
+                currentPosition = (currentPosition + 1) % positions.length;
+                updatePosition();
+            });
+
+            // Initiale Position festlegen
+            updatePosition();
+
+            // Druck-Funktion
+            printButton.addEventListener('click', () => {
+                const contentDiv = document.getElementById(uniqueContentId);
+                const printWindow = window.open("", "_blank");
+
+                printWindow.document.open();
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html lang="de">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>🖨</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                margin: 2cm;
+                            }
+                        </style>
+                    </head>
+                    <body>${contentDiv.innerHTML}</body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.onload = () => {
+                    printWindow.focus();
+                    printWindow.print();
+                    printWindow.close();
+                };
+            });
+
+            // Zwischenablage-Funktion
+            copyButton.addEventListener('click', () => {
+                const contentDiv = document.getElementById(uniqueContentId);
+                const textToCopy = contentDiv.innerText || contentDiv.textContent;
+
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => alert("Der Inhalt wurde erfolgreich in die Zwischenablage kopiert!"))
+                    .catch((err) => alert("Fehler beim Kopieren: " + err));
+            });
+
+            // Per E-Mail senden-Funktion
+            emailButton.addEventListener('click', () => {
+                const contentDiv = document.getElementById(uniqueContentId);
+                const textToCopy = contentDiv.innerText || contentDiv.textContent;
+
+                const firstLine = textToCopy.split('\n')[0];
+                const currentDate = new Date();
+                const formattedDate = currentDate.toLocaleString('de-DE', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => {
+                        const mailtoLink = `mailto:?subject=${encodeURIComponent(firstLine + ' - ' + formattedDate)}&body=${encodeURIComponent(textToCopy)}`;
+                        window.location.href = mailtoLink;
+                    })
+                    .catch((err) => alert("Fehler beim Kopieren: " + err));
+            });
         }
 
-        // Wenn die Seite geladen ist, rufe die Funktion auf
-        window.onload = getUrlParameters;
+        // Dynamischen Inhalt laden und Buttons hinzufügen
+        (function () {
+            const currentUrl = window.location.href;
+            const htmlContent = currentUrl.split('.html?&=')[1];
+            const contentDiv = document.getElementById(uniqueContentId);
+
+            if (htmlContent) {
+                try {
+                    const decodedHtml = decodeURIComponent(htmlContent);
+                    contentDiv.innerHTML = decodedHtml;
+                } catch (e) {
+                    document.body.innerHTML += '<p style="color: red;">Fehler beim Dekodieren der URL.</p>';
+                }
+            } else {
+                document.body.innerHTML += '<p style="color: red;">Kein gültiger HTML-Inhalt in der URL gefunden.</p>';
+            }
+
+            // Buttons hinzufügen
+            addFloatingButtons();
+        })();
     </script>
 </body>
 </html>
