@@ -14,7 +14,7 @@
         const floatingContainerId = '0aafa35f7a0f5d6b3b87d76a76328f8d1dbf2565b37f618285e307fbef6cda0c';
 
         // Funktion zum Einfügen von schwebenden Buttons
-        function addFloatingButtons() {
+        function e699d95ca46dc29080bebbf9a0962f5947e0ce2d5727416aba74b4d177e84c63() {
             // Schwebenden Container erstellen
             const floatingContainer = document.createElement('div');
             floatingContainer.id = floatingContainerId;
@@ -69,11 +69,11 @@
                         background-color: #0056b3;
                     }
                 </style>
-                <div class="container vertical" id="buttonContainer">
-                    <button class="button" id="printButton">Drucken</button>
-                    <button class="button" id="copyButton">In Zwischenablage kopieren</button>
-                    <button class="button" id="emailButton">Per E-Mail senden</button>
-                    <button class="button" id="positionButton">Position wechseln</button>
+                <div class="container vertical" id="dc37cfb89630d3df4cec24e8b7384ee53f533e11eea535293496b8a4477a9924">
+                    <button class="button" id="b1a5f00fa98f370cf053c6fdcd1346803030f8b4f8cd251938ab91e65da643f2">Drucken</button>
+                    <button class="button" id="1cd4a3f79c83f8b7d37e15f53af264c6b58c4c2a9debb7345a6220b919e1931f">In Zwischenablage kopieren</button>
+                    <button class="button" id="d13b592361b09496b24cde986d69d3dfe05bbee5213205de5ab9c2e83b074f08">Per E-Mail senden</button>
+                    <button class="button" id="72db45e9c4da1edb4f9f66f947c9f9f14275cf181b0e2cd56816c391d8e97e4a">Position wechseln</button>
                 </div>
             `;
 
@@ -81,11 +81,11 @@
             document.body.appendChild(floatingContainer);
 
             // Referenzen für Buttons und Container
-            const buttonContainer = shadowRoot.getElementById('buttonContainer');
-            const printButton = shadowRoot.getElementById('printButton');
-            const copyButton = shadowRoot.getElementById('copyButton');
-            const emailButton = shadowRoot.getElementById('emailButton');
-            const positionButton = shadowRoot.getElementById('positionButton');
+            const buttonContainer = shadowRoot.getElementById('dc37cfb89630d3df4cec24e8b7384ee53f533e11eea535293496b8a4477a9924');
+            const printButton = shadowRoot.getElementById('b1a5f00fa98f370cf053c6fdcd1346803030f8b4f8cd251938ab91e65da643f2');
+            const copyButton = shadowRoot.getElementById('1cd4a3f79c83f8b7d37e15f53af264c6b58c4c2a9debb7345a6220b919e1931f');
+            const emailButton = shadowRoot.getElementById('d13b592361b09496b24cde986d69d3dfe05bbee5213205de5ab9c2e83b074f08');
+            const positionButton = shadowRoot.getElementById('72db45e9c4da1edb4f9f66f947c9f9f14275cf181b0e2cd56816c391d8e97e4a');
 
             // Positionslogik
             const positions = [
@@ -149,8 +149,8 @@
                     .then(() => alert("Der Inhalt wurde erfolgreich in die Zwischenablage kopiert!"))
                     .catch((err) => alert("Fehler beim Kopieren: " + err));
             });
-
-            // Per E-Mail senden-Funktion
+			
+			// Per E-Mail senden-Funktion
             emailButton.addEventListener('click', () => {
                 const contentDiv = document.getElementById(uniqueContentId);
                 const textToCopy = contentDiv.innerText || contentDiv.textContent;
@@ -166,13 +166,17 @@
                     second: '2-digit'
                 });
 
-                navigator.clipboard.writeText(textToCopy)
-                    .then(() => {
-                        const mailtoLink = `mailto:?subject=${encodeURIComponent(firstLine + ' - ' + formattedDate)}&body=${encodeURIComponent(textToCopy)}`;
-                        window.location.href = mailtoLink;
-                    })
-                    .catch((err) => alert("Fehler beim Kopieren: " + err));
-            });
+				// Zwischenablage kopieren
+				navigator.clipboard.writeText(textToCopy)
+					.then(() => {
+						// Mailto-Link mit erster Zeile und Datum im Betreff und vollständigem Text im Body
+						const mailtoLink = `mailto:?subject=${encodeURIComponent(firstLine + ' - ' + formattedDate)}&body=${encodeURIComponent(textToCopy)}`;
+						window.location.href = mailtoLink;
+					})
+					.catch((err) => alert("Fehler beim Kopieren: " + err));
+			});
+
+			
         }
 
         // Dynamischen Inhalt laden und Buttons hinzufügen
@@ -181,19 +185,36 @@
             const htmlContent = currentUrl.split('.html?&=')[1];
             const contentDiv = document.getElementById(uniqueContentId);
 
+            // Skripte innerhalb des geladenen Inhalts ausführen
+            function executeScripts(container) {
+                const scripts = container.querySelectorAll("script");
+                scripts.forEach((script) => {
+                    const newScript = document.createElement("script");
+                    if (script.src) {
+                        newScript.src = script.src;
+                        newScript.async = false;
+                    } else {
+                        newScript.textContent = script.textContent;
+                    }
+                    document.body.appendChild(newScript);
+                    script.remove();
+                });
+            }
+
             if (htmlContent) {
                 try {
                     const decodedHtml = decodeURIComponent(htmlContent);
                     contentDiv.innerHTML = decodedHtml;
+                    executeScripts(contentDiv);
                 } catch (e) {
-                    document.body.innerHTML += '<p style="color: red;">Fehler beim Dekodieren der URL.</p>';
+                    document.body.innerHTML += '<p style="color: red;">Fehler beim Dekodieren der URL. Möglicherweise enthält die URL ungültige Zeichen.</p>';
                 }
             } else {
-                document.body.innerHTML += '<p style="color: red;">Kein gültiger HTML-Inhalt in der URL gefunden.</p>';
+                document.body.innerHTML += '<p style="color: red;">Kein gültiger HTML-Inhalt in der URL gefunden. Bitte die URL in der Form ".html?&lt;html-code&gt;" aufrufen.</p>';
             }
 
             // Buttons hinzufügen
-            addFloatingButtons();
+            e699d95ca46dc29080bebbf9a0962f5947e0ce2d5727416aba74b4d177e84c63();
         })();
     </script>
 </body>
