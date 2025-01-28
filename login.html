@@ -59,14 +59,14 @@
                     }
 
                     .hidden.bottom {
-                        transform: translateY(150%); /* Nach unten ausblenden */
+                        transform: translateY(200%); /* Nach unten ausblenden */
                     }
 
                     .button {
                         all: unset;
                         display: inline-block;
-                        padding: 15px 20px;
-                        font-size: 16px;
+                        padding: 10px 15px;
+                        font-size: 14px;
                         font-family: Arial, sans-serif;
                         color: #ffffff;
                         background-color: #007bff;
@@ -96,7 +96,7 @@
                         border-radius: 50%;
                         cursor: pointer;
                         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                        font-size: 20px;
+                        font-size: 22px;
                     }
 
                     .toggle.left {
@@ -115,6 +115,20 @@
                         bottom: -20px;
                         left: 50%;
                         transform: translateX(-50%);
+                    }
+
+                    /* Mobile Anpassungen */
+                    @media (max-width: 600px) {
+                        .button {
+                            padding: 8px 12px; /* Noch kleinere Buttons für mobile Geräte */
+                            font-size: 12px; /* Kleinere Schrift auf mobilen Geräten */
+                        }
+
+                        .toggle {
+                            width: 30px;
+                            height: 30px;
+                            font-size: 16px; /* Kleine Schrift für den Toggle-Button */
+                        }
                     }
                 </style>
                 <div class="container vertical" id="buttonContainer">
