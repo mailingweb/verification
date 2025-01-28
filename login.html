@@ -45,21 +45,21 @@
                     }
 
                     .hidden {
-                        opacity: 0.5; /* Teilweise sichtbar */
-                        pointer-events: none; /* Nicht interaktiv */
+                        opacity: 0.5;
+                        pointer-events: none;
                         transition: transform 0.3s ease, opacity 0.3s ease;
                     }
 
                     .hidden.left {
-                        transform: translateX(-150%); /* Nach links ausblenden */
+                        transform: translateX(-150%);
                     }
 
                     .hidden.right {
-                        transform: translateX(150%); /* Nach rechts ausblenden */
+                        transform: translateX(150%);
                     }
 
                     .hidden.bottom {
-                        transform: translateY(200%); /* Nach unten ausblenden */
+                        transform: translateY(200%);
                     }
 
                     .button {
@@ -84,6 +84,11 @@
                         transform: scale(1.05);
                     }
 
+                    .button:active {
+                        transform: none;
+                        background-color: #007bff;
+                    }
+
                     .toggle {
                         position: fixed;
                         display: flex;
@@ -100,37 +105,53 @@
                     }
 
                     .toggle.left {
-                        left: -20px;
+                        left: 10px;
                         top: 50%;
                         transform: translateY(-50%);
                     }
 
                     .toggle.right {
-                        right: -20px;
+                        right: 10px;
                         top: 50%;
                         transform: translateY(-50%);
                     }
 
                     .toggle.bottom {
-                        bottom: -20px;
-                        left: 50%;
-                        transform: translateX(-50%);
+                        right: 10px;
+                        bottom: 0;
+                        transform: translateY(-50%);
                     }
 
                     /* Mobile Anpassungen */
                     @media (max-width: 600px) {
+                        .container {
+                            left: 0;
+                            right: 0;
+                            bottom: 0;
+                            top: auto;
+                            justify-content: center;
+                        }
+
                         .button {
-                            padding: 8px 12px; /* Noch kleinere Buttons für mobile Geräte */
-                            font-size: 12px; /* Kleinere Schrift auf mobilen Geräten */
+                            padding: 8px 12px;
+                            font-size: 12px;
                         }
 
                         .toggle {
-                            width: 30px;
-                            height: 30px;
-                            font-size: 16px; /* Kleine Schrift für den Toggle-Button */
+                            width: 35px;
+                            height: 35px;
+                            font-size: 18px;
+                        }
+                    }
+
+                    /* Sicherstellen, dass auf allen Bildschirmgrößen keine horizontale Scrollleiste entsteht */
+                    @media (max-width: 600px) {
+                        body {
+                            overflow-x: hidden;
                         }
                     }
                 </style>
+
                 <div class="container vertical" id="buttonContainer">
                     <button class="button" id="printButton">Drucken</button>
                     <button class="button" id="copyButton">In Zwischenablage kopieren</button>
