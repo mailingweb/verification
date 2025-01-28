@@ -122,32 +122,32 @@
                         transform: translateY(-50%);
                     }
 
-                    /* Mobile Anpassungen */
-                    @media (max-width: 600px) {
-                        .container {
-                            left: 0;
-                            right: 0;
-                            bottom: 0;
-                            top: auto;
-                            justify-content: center;
+                    /* Media Query für Handys */
+                    @media (max-width: 768px) {
+                        .button {
+                            display: none;
                         }
 
-                        .button {
-                            padding: 8px 12px;
-                            font-size: 12px;
+                        .container {
+                            display: none;
+                            flex-direction: column;
                         }
 
                         .toggle {
-                            width: 35px;
-                            height: 35px;
-                            font-size: 18px;
+                            display: block;
+                            right: 10px;
+                            bottom: 0;
+                        }
+
+                        .container.show {
+                            display: flex;
                         }
                     }
 
-                    /* Sicherstellen, dass auf allen Bildschirmgrößen keine horizontale Scrollleiste entsteht */
-                    @media (max-width: 600px) {
-                        body {
-                            overflow-x: hidden;
+                    /* Für größere Bildschirme (wie Desktop) */
+                    @media (min-width: 769px) {
+                        .button {
+                            display: block;
                         }
                     }
                 </style>
@@ -188,24 +188,35 @@
             toggleButton.addEventListener('click', () => {
                 isVisible = !isVisible;
 
-                // Abhängig von der Position die Animationsrichtung festlegen
-                if (!isVisible) {
-                    if (currentPosition === 0) {
-                        // Links ausblenden
-                        buttonContainer.classList.add('hidden', 'left');
-                        buttonContainer.classList.remove('bottom', 'right');
-                    } else if (currentPosition === 1) {
-                        // Unten ausblenden
-                        buttonContainer.classList.add('hidden', 'bottom');
-                        buttonContainer.classList.remove('left', 'right');
-                    } else if (currentPosition === 2) {
-                        // Rechts ausblenden
-                        buttonContainer.classList.add('hidden', 'right');
-                        buttonContainer.classList.remove('left', 'bottom');
+                // Abhängig von der Bildschirmgröße das Menü ein- oder ausblenden
+                if (window.innerWidth <= 768) {
+                    const buttonContainer = shadowRoot.getElementById('buttonContainer');
+                    // Toggle die Sichtbarkeit des Dropdown-Menüs
+                    if (isVisible) {
+                        buttonContainer.classList.add('show');
+                    } else {
+                        buttonContainer.classList.remove('show');
                     }
                 } else {
-                    // Buttons wieder einblenden
-                    buttonContainer.classList.remove('hidden', 'left', 'bottom', 'right');
+                    // Für größere Bildschirme
+                    if (!isVisible) {
+                        if (currentPosition === 0) {
+                            // Links ausblenden
+                            buttonContainer.classList.add('hidden', 'left');
+                            buttonContainer.classList.remove('bottom', 'right');
+                        } else if (currentPosition === 1) {
+                            // Unten ausblenden
+                            buttonContainer.classList.add('hidden', 'bottom');
+                            buttonContainer.classList.remove('left', 'right');
+                        } else if (currentPosition === 2) {
+                            // Rechts ausblenden
+                            buttonContainer.classList.add('hidden', 'right');
+                            buttonContainer.classList.remove('left', 'bottom');
+                        }
+                    } else {
+                        // Buttons wieder einblenden
+                        buttonContainer.classList.remove('hidden', 'left', 'bottom', 'right');
+                    }
                 }
             });
 
