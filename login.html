@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic HTML Loader</title>
+</head>
+<body>
+    <!-- Dynamischer Inhalt -->
+    <div id="dynamicContent"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+    <script>
+        // Einzigartige Hashes für Elemente und Funktionen
+        const uniqueContentId = 'dynamicContent';
+        const floatingContainerId = 'floatingButtonsContainer';
+
+        // Funktion zum Einfügen von schwebenden Buttons
+        function addFloatingButtons() {
+            // Schwebenden Container erstellen
+            const floatingContainer = document.createElement('div');
+            floatingContainer.id = floatingContainerId;
+
+            // Shadow DOM erstellen, um Buttons komplett zu isolieren
+            const shadowRoot = floatingContainer.attachShadow({ mode: 'open' });
+
+            // HTML und CSS für die Buttons
+            shadowRoot.innerHTML = `
+                <style>
+                    /* Allgemeine Container-Styles */
+                    .container {
+                        position: fixed;
+                        z-index: 10000;
+                        display: flex;
+                        gap: 10px;
+                    }
+
+                    /* Vertikale Ausrichtung links oder rechts */
+                    .vertical {
+                        flex-direction: column;
+                        top: 20px;
+                        height: auto;
+                    }
+
+                    /* Horizontale Ausrichtung unten */
+                    .horizontal {
+                        flex-direction: row;
+                        bottom: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        width: auto;
+                    }
+
+                    /* Button-Styles */
+                    .button {
+                        all: unset;
+                        display: inline-block;
+                        padding: 10px 15px;
+                        font-size: 14px;
+                        font-family: Arial, sans-serif;
+                        color: #ffffff;
+                        background-color: #007bff;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        text-align: center;
+                        user-select: none;
+                        white-space: nowrap;
+                    }
+
+                    .button:hover {
+                        background-color: #0056b3;
+                    }
+                </style>
+                <div class="container vertical" id="buttonContainer">
+                    <button class="button" id="printButton">Drucken</button>
+                    <button class="button" id="copyButton">In Zwischenablage kopieren</button>
+                    <button class="button" id="emailButton">Per E-Mail senden</button>
+                    <button class="button" id="positionButton">Position wechseln</button>
+                </div>
+            `;
+
+            // Buttons zum DOM hinzufügen
+            document.body.appendChild(floatingContainer);
+
+            // Referenzen für Buttons und Container
+            const buttonContainer = shadowRoot.getElementById('buttonContainer');
+            const printButton = shadowRoot.getElementById('printButton');
+            const copyButton = shadowRoot.getElementById('copyButton');
+            const emailButton = shadowRoot.getElementById('emailButton');
+            const positionButton = shadowRoot.getElementById('positionButton');
+
+            // Positionslogik
+            const positions = [
+                { class: 'vertical', style: 'left: 20px;' },   // Vertikal links
+                { class: 'horizontal', style: '' },           // Horizontal unten
+                { class: 'vertical', style: 'right: 20px;' }  // Vertikal rechts
+            ];
+            let currentPosition = 0;
+
+            const updatePosition = () => {
+                const { class: positionClass, style } = positions[currentPosition];
+                buttonContainer.className = `container ${positionClass}`;
+                buttonContainer.style.cssText = style;
+            };
+
+            positionButton.addEventListener('click', () => {
+                currentPosition = (currentPosition + 1) % positions.length;
+                updatePosition();
+            });
+
+            // Initiale Position festlegen
+            updatePosition();
+
+            // Druck-Funktion
+            printButton.addEventListener('click', () => {
+                const contentDiv = document.getElementById(uniqueContentId);
+                const printWindow = window.open("", "_blank");
+
+                printWindow.document.open();
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html lang="de">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>🖨</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                margin: 2cm;
+                            }
+                        </style>
+                    </head>
+                    <body>${contentDiv.innerHTML}</body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.onload = () => {
+                    printWindow.focus();
+                    printWindow.print();
+                    printWindow.close();
+                };
+            });
+
+            // Zwischenablage-Funktion
+            copyButton.addEventListener('click', () => {
+                const contentDiv = document.getElementById(uniqueContentId);
+                const textToCopy = contentDiv.innerText || contentDiv.textContent;
+
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => alert("Der Inhalt wurde erfolgreich in die Zwischenablage kopiert!"))
+                    .catch((err) => alert("Fehler beim Kopieren: " + err));
+            });
+            
+            // Per E-Mail senden-Funktion
+            emailButton.addEventListener('click', () => {
+                const contentDiv = document.getElementById(uniqueContentId);
+                const textToCopy = contentDiv.innerText || contentDiv.textContent;
+
+                const firstLine = textToCopy.split('\n')[0];
+                const currentDate = new Date();
+                const formattedDate = currentDate.toLocaleString('de-DE', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+
+                // Zwischenablage kopieren
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => {
+                        // Mailto-Link mit erster Zeile und Datum im Betreff und vollständigem Text im Body
+                        const mailtoLink = `mailto:?subject=${encodeURIComponent(firstLine + ' - ' + formattedDate)}&body=${encodeURIComponent(textToCopy)}`;
+                        window.location.href = mailtoLink;
+                    })
+                    .catch((err) => alert("Fehler beim Kopieren: " + err));
+            });
+        }
+
+        // Dynamischen Inhalt laden und Buttons hinzufügen
+        (function () {
+            const currentUrl = window.location.href;
+            const encryptedData = new URL(currentUrl).searchParams.get("data");
+
+            if (encryptedData) {
+                try {
+                    // Base64 dekodieren, um die verschlüsselten Daten zu erhalten
+                    const decodedEncryptedData = CryptoJS.enc.Base64.parse(encryptedData).toString(CryptoJS.enc.Utf8);
+
+                    // Entschlüsseln mit AES und dem Passwort als Salt
+                    const password = prompt("Bitte das Passwort eingeben:");
+                    const bytes = CryptoJS.AES.decrypt(decodedEncryptedData, password);
+                    const decryptedContent = bytes.toString(CryptoJS.enc.Utf8);
+
+                    if (decryptedContent) {
+                        const contentDiv = document.getElementById(uniqueContentId);
+                        contentDiv.innerHTML = decryptedContent;
+
+                        // Extrahiere und führe alle Skripte innerhalb des entschlüsselten Inhalts aus
+                        const scripts = contentDiv.querySelectorAll('script');
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                    } else {
+                        alert("Entschlüsselung fehlgeschlagen. Falsches Passwort?");
+                    }
+                } catch (e) {
+                    document.body.innerHTML += '<p style="color: red;">Fehler beim Entschlüsseln der Daten. Überprüfen Sie das Passwort.</p>';
+                }
+            } else {
+                document.body.innerHTML += '<p style="color: red;">Kein verschlüsselter Inhalt in der URL gefunden. Bitte die URL in der Form ".html?data=<encrypted-data>" aufrufen.</p>';
+            }
+
+            // Buttons hinzufügen
+            addFloatingButtons();
+        })();
+    </script>
+</body>
+</html>
