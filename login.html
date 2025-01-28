@@ -121,35 +121,28 @@
                         bottom: 0;
                         transform: translateY(-50%);
                     }
-
-                    /* Media Query für Handys */
+                
+                    /* Mobile Ansicht: Buttons verstecken und Dropdown-Menü aktivieren */
                     @media (max-width: 768px) {
-                        .button {
-                            display: none;
-                        }
-
                         .container {
-                            display: none;
-                            flex-direction: column;
-                        }
-
-                        .toggle {
-                            display: block;
-                            right: 10px;
-                            bottom: 0;
+                            display: none; /* Buttons initial verstecken */
                         }
 
                         .container.show {
-                            display: flex;
+                            display: block; /* Buttons anzeigen, wenn die Klasse "show" hinzugefügt wird */
+                        }
+
+                        .toggle {
+                            display: flex; /* Toggle-Button sichtbar lassen */
+                        }
+
+                        .button {
+                            display: block; /* Buttons als Block-Elemente anzeigen */
+                            width: 100%; /* Vollbreite für Dropdown-Menü */
+                            text-align: left;
                         }
                     }
 
-                    /* Für größere Bildschirme (wie Desktop) */
-                    @media (min-width: 769px) {
-                        .button {
-                            display: block;
-                        }
-                    }
                 </style>
 
                 <div class="container vertical" id="buttonContainer">
@@ -188,33 +181,24 @@
             toggleButton.addEventListener('click', () => {
                 isVisible = !isVisible;
 
-                // Abhängig von der Bildschirmgröße das Menü ein- oder ausblenden
+                // Mobile Ansicht: Dropdown-Menü umschalten
                 if (window.innerWidth <= 768) {
-                    const buttonContainer = shadowRoot.getElementById('buttonContainer');
-                    // Toggle die Sichtbarkeit des Dropdown-Menüs
                     if (isVisible) {
                         buttonContainer.classList.add('show');
                     } else {
                         buttonContainer.classList.remove('show');
                     }
                 } else {
-                    // Für größere Bildschirme
+                    // Bestehendes Verhalten für größere Bildschirme (Desktop)
                     if (!isVisible) {
                         if (currentPosition === 0) {
-                            // Links ausblenden
                             buttonContainer.classList.add('hidden', 'left');
-                            buttonContainer.classList.remove('bottom', 'right');
                         } else if (currentPosition === 1) {
-                            // Unten ausblenden
                             buttonContainer.classList.add('hidden', 'bottom');
-                            buttonContainer.classList.remove('left', 'right');
                         } else if (currentPosition === 2) {
-                            // Rechts ausblenden
                             buttonContainer.classList.add('hidden', 'right');
-                            buttonContainer.classList.remove('left', 'bottom');
                         }
                     } else {
-                        // Buttons wieder einblenden
                         buttonContainer.classList.remove('hidden', 'left', 'bottom', 'right');
                     }
                 }
