@@ -121,7 +121,7 @@
                         bottom: 0;
                         transform: translateY(-50%);
                     }
-                
+
                     /* Mobile Ansicht: Buttons verstecken und Dropdown-Menü aktivieren */
                     @media (max-width: 768px) {
                         .container {
@@ -140,6 +140,7 @@
                             display: block; /* Buttons als Block-Elemente anzeigen */
                             width: 100%; /* Vollbreite für Dropdown-Menü */
                             text-align: left;
+                            margin-bottom: 10px; /* Mehr Abstand zwischen den Buttons im Dropdown */
                         }
                     }
 
@@ -183,11 +184,7 @@
 
                 // Mobile Ansicht: Dropdown-Menü umschalten
                 if (window.innerWidth <= 768) {
-                    if (isVisible) {
-                        buttonContainer.classList.add('show');
-                    } else {
-                        buttonContainer.classList.remove('show');
-                    }
+                    buttonContainer.classList.toggle('show');
                 } else {
                     // Bestehendes Verhalten für größere Bildschirme (Desktop)
                     if (!isVisible) {
