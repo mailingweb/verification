@@ -142,6 +142,10 @@
                             text-align: left;
                             margin-bottom: 10px; /* Mehr Abstand zwischen den Buttons im Dropdown */
                         }
+
+                        .container.right {
+                            margin-right: 20px; /* 20px Abstand vom rechten Rand */
+                        }
                     }
 
                 </style>
@@ -269,6 +273,10 @@
                     })
                     .catch((err) => alert("Fehler beim Kopieren: " + err));
             });
+
+            if (window.innerWidth > 768) {
+                toggleButton.click();
+            }
         }
 
         (function () {
