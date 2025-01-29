@@ -7,40 +7,35 @@
 </head>
 <body>
     <!-- Dynamischer Inhalt -->
-    <div id="6dfc24b9b228c9808d31b7f8afc5a06e892ffccedd9acbcf6c379b30f647882d"></div>
-    <script>
-        // Einzigartige Hashes für Elemente und Funktionen
-        const uniqueContentId = '6dfc24b9b228c9808d31b7f8afc5a06e892ffccedd9acbcf6c379b30f647882d';
-        const floatingContainerId = '0aafa35f7a0f5d6b3b87d76a76328f8d1dbf2565b37f618285e307fbef6cda0c';
+    <div id="dynamicContent"></div>
 
-        // Funktion zum Einfügen von schwebenden Buttons
-        function e699d95ca46dc29080bebbf9a0962f5947e0ce2d5727416aba74b4d177e84c63() {
-            // Schwebenden Container erstellen
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+    <script>
+        const uniqueContentId = 'dynamicContent';
+        const floatingContainerId = 'floatingButtonsContainer';
+
+        function addFloatingButtons() {
             const floatingContainer = document.createElement('div');
             floatingContainer.id = floatingContainerId;
 
-            // Shadow DOM erstellen, um Buttons komplett zu isolieren
             const shadowRoot = floatingContainer.attachShadow({ mode: 'open' });
 
-            // HTML und CSS für die Buttons
             shadowRoot.innerHTML = `
                 <style>
-                    /* Allgemeine Container-Styles */
                     .container {
                         position: fixed;
                         z-index: 10000;
                         display: flex;
                         gap: 10px;
+                        transition: transform 0.3s ease, opacity 0.3s ease;
                     }
 
-                    /* Vertikale Ausrichtung links oder rechts */
                     .vertical {
                         flex-direction: column;
                         top: 20px;
                         height: auto;
                     }
 
-                    /* Horizontale Ausrichtung unten */
                     .horizontal {
                         flex-direction: row;
                         bottom: 20px;
@@ -49,7 +44,24 @@
                         width: auto;
                     }
 
-                    /* Button-Styles */
+                    .hidden {
+                        opacity: 0.5;
+                        pointer-events: none;
+                        transition: transform 0.3s ease, opacity 0.3s ease;
+                    }
+
+                    .hidden.left {
+                        transform: translateX(-150%);
+                    }
+
+                    .hidden.right {
+                        transform: translateX(150%);
+                    }
+
+                    .hidden.bottom {
+                        transform: translateY(200%);
+                    }
+
                     .button {
                         all: unset;
                         display: inline-block;
@@ -58,58 +70,148 @@
                         font-family: Arial, sans-serif;
                         color: #ffffff;
                         background-color: #007bff;
-                        border-radius: 5px;
+                        border-radius: 8px;
                         cursor: pointer;
                         text-align: center;
                         user-select: none;
                         white-space: nowrap;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        transition: background-color 0.2s, transform 0.2s;
                     }
 
                     .button:hover {
                         background-color: #0056b3;
+                        transform: scale(1.05);
                     }
+
+                    .button:active {
+                        transform: none;
+                        background-color: #007bff;
+                    }
+
+                    .toggle {
+                        position: fixed;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 40px;
+                        height: 40px;
+                        background-color: #007bff;
+                        color: white;
+                        border-radius: 50%;
+                        cursor: pointer;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        font-size: 22px;
+                    }
+
+                    .toggle.left {
+                        left: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                    }
+
+                    .toggle.right {
+                        right: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                    }
+
+                    .toggle.bottom {
+                        right: 10px;
+                        bottom: 0;
+                        transform: translateY(-50%);
+                    }
+
+                    /* Mobile Ansicht: Buttons verstecken und Dropdown-Menü aktivieren */
+                    @media (max-width: 768px) {
+                        .container {
+                            display: none; /* Buttons initial verstecken */
+                        }
+
+                        .container.show {
+                            display: block; /* Buttons anzeigen, wenn die Klasse "show" hinzugefügt wird */
+                        }
+
+                        .toggle {
+                            display: flex; /* Toggle-Button sichtbar lassen */
+                        }
+
+                        .button {
+                            display: block; /* Buttons als Block-Elemente anzeigen */
+                            width: 100%; /* Vollbreite für Dropdown-Menü */
+                            text-align: left;
+                            margin-bottom: 10px; /* Mehr Abstand zwischen den Buttons im Dropdown */
+                        }
+
+                        .container.right {
+                            margin-right: 20px; /* 20px Abstand vom rechten Rand */
+                        }
+                    }
+
                 </style>
-                <div class="container vertical" id="dc37cfb89630d3df4cec24e8b7384ee53f533e11eea535293496b8a4477a9924">
-                    <button class="button" id="b1a5f00fa98f370cf053c6fdcd1346803030f8b4f8cd251938ab91e65da643f2">Drucken</button>
-                    <button class="button" id="1cd4a3f79c83f8b7d37e15f53af264c6b58c4c2a9debb7345a6220b919e1931f">In Zwischenablage kopieren</button>
-                    <button class="button" id="d13b592361b09496b24cde986d69d3dfe05bbee5213205de5ab9c2e83b074f08">Per E-Mail senden</button>
-                    <button class="button" id="72db45e9c4da1edb4f9f66f947c9f9f14275cf181b0e2cd56816c391d8e97e4a">Position wechseln</button>
+
+                <div class="container vertical" id="buttonContainer">
+                    <button class="button" id="printButton">Drucken</button>
+                    <button class="button" id="copyButton">In Zwischenablage kopieren</button>
+                    <button class="button" id="emailButton">Per E-Mail senden</button>
+                    <button class="button" id="positionButton">Position wechseln</button>
                 </div>
+                <div class="toggle left" id="toggleButton">☰</div>
             `;
 
-            // Buttons zum DOM hinzufügen
             document.body.appendChild(floatingContainer);
 
-            // Referenzen für Buttons und Container
-            const buttonContainer = shadowRoot.getElementById('dc37cfb89630d3df4cec24e8b7384ee53f533e11eea535293496b8a4477a9924');
-            const printButton = shadowRoot.getElementById('b1a5f00fa98f370cf053c6fdcd1346803030f8b4f8cd251938ab91e65da643f2');
-            const copyButton = shadowRoot.getElementById('1cd4a3f79c83f8b7d37e15f53af264c6b58c4c2a9debb7345a6220b919e1931f');
-            const emailButton = shadowRoot.getElementById('d13b592361b09496b24cde986d69d3dfe05bbee5213205de5ab9c2e83b074f08');
-            const positionButton = shadowRoot.getElementById('72db45e9c4da1edb4f9f66f947c9f9f14275cf181b0e2cd56816c391d8e97e4a');
+            const buttonContainer = shadowRoot.getElementById('buttonContainer');
+            const toggleButton = shadowRoot.getElementById('toggleButton');
+            const printButton = shadowRoot.getElementById('printButton');
+            const copyButton = shadowRoot.getElementById('copyButton');
+            const emailButton = shadowRoot.getElementById('emailButton');
+            const positionButton = shadowRoot.getElementById('positionButton');
 
-            // Positionslogik
             const positions = [
-                { class: 'vertical', style: 'left: 20px;' },   // Vertikal links
-                { class: 'horizontal', style: '' },           // Horizontal unten
-                { class: 'vertical', style: 'right: 20px;' }  // Vertikal rechts
+                { class: 'vertical', style: 'left: 20px;', toggleClass: 'left' },
+                { class: 'horizontal', style: '', toggleClass: 'bottom' },
+                { class: 'vertical', style: 'right: 20px;', toggleClass: 'right' }
             ];
             let currentPosition = 0;
+            let isVisible = true;
 
             const updatePosition = () => {
-                const { class: positionClass, style } = positions[currentPosition];
+                const { class: positionClass, style, toggleClass } = positions[currentPosition];
                 buttonContainer.className = `container ${positionClass}`;
                 buttonContainer.style.cssText = style;
+                toggleButton.className = `toggle ${toggleClass}`;
             };
+
+            toggleButton.addEventListener('click', () => {
+                isVisible = !isVisible;
+
+                // Mobile Ansicht: Dropdown-Menü umschalten
+                if (window.innerWidth <= 768) {
+                    buttonContainer.classList.toggle('show');
+                } else {
+                    // Bestehendes Verhalten für größere Bildschirme (Desktop)
+                    if (!isVisible) {
+                        if (currentPosition === 0) {
+                            buttonContainer.classList.add('hidden', 'left');
+                        } else if (currentPosition === 1) {
+                            buttonContainer.classList.add('hidden', 'bottom');
+                        } else if (currentPosition === 2) {
+                            buttonContainer.classList.add('hidden', 'right');
+                        }
+                    } else {
+                        buttonContainer.classList.remove('hidden', 'left', 'bottom', 'right');
+                    }
+                }
+            });
 
             positionButton.addEventListener('click', () => {
                 currentPosition = (currentPosition + 1) % positions.length;
                 updatePosition();
             });
 
-            // Initiale Position festlegen
             updatePosition();
 
-            // Druck-Funktion
             printButton.addEventListener('click', () => {
                 const contentDiv = document.getElementById(uniqueContentId);
                 const printWindow = window.open("", "_blank");
@@ -140,7 +242,6 @@
                 };
             });
 
-            // Zwischenablage-Funktion
             copyButton.addEventListener('click', () => {
                 const contentDiv = document.getElementById(uniqueContentId);
                 const textToCopy = contentDiv.innerText || contentDiv.textContent;
@@ -149,8 +250,7 @@
                     .then(() => alert("Der Inhalt wurde erfolgreich in die Zwischenablage kopiert!"))
                     .catch((err) => alert("Fehler beim Kopieren: " + err));
             });
-            
-            // Per E-Mail senden-Funktion
+
             emailButton.addEventListener('click', () => {
                 const contentDiv = document.getElementById(uniqueContentId);
                 const textToCopy = contentDiv.innerText || contentDiv.textContent;
@@ -166,55 +266,52 @@
                     second: '2-digit'
                 });
 
-                // Zwischenablage kopieren
                 navigator.clipboard.writeText(textToCopy)
                     .then(() => {
-                        // Mailto-Link mit erster Zeile und Datum im Betreff und vollständigem Text im Body
                         const mailtoLink = `mailto:?subject=${encodeURIComponent(firstLine + ' - ' + formattedDate)}&body=${encodeURIComponent(textToCopy)}`;
                         window.location.href = mailtoLink;
                     })
                     .catch((err) => alert("Fehler beim Kopieren: " + err));
             });
 
-            
+            if (window.innerWidth > 768) {
+                toggleButton.click();
+            }
         }
 
-        // Dynamischen Inhalt laden und Buttons hinzufügen
         (function () {
             const currentUrl = window.location.href;
-            const htmlContent = currentUrl.split('.html?data=#')[1];
-            const contentDiv = document.getElementById(uniqueContentId);
+            const encryptedData = new URL(currentUrl).searchParams.get("data");
 
-            // Skripte innerhalb des geladenen Inhalts ausführen
-            function executeScripts(container) {
-                const scripts = container.querySelectorAll("script");
-                scripts.forEach((script) => {
-                    const newScript = document.createElement("script");
-                    if (script.src) {
-                        newScript.src = script.src;
-                        newScript.async = false;
-                    } else {
-                        newScript.textContent = script.textContent;
-                    }
-                    document.body.appendChild(newScript);
-                    script.remove();
-                });
-            }
-
-            if (htmlContent) {
+            if (encryptedData) {
                 try {
-                    const decodedHtml = decodeURIComponent(htmlContent);
-                    contentDiv.innerHTML = decodedHtml;
-                    executeScripts(contentDiv);
+                    const decodedEncryptedData = CryptoJS.enc.Base64.parse(encryptedData).toString(CryptoJS.enc.Utf8);
+
+                    const password = prompt("Bitte das Passwort eingeben:");
+                    const bytes = CryptoJS.AES.decrypt(decodedEncryptedData, password);
+                    const decryptedContent = bytes.toString(CryptoJS.enc.Utf8);
+
+                    if (decryptedContent) {
+                        const contentDiv = document.getElementById(uniqueContentId);
+                        contentDiv.innerHTML = decryptedContent;
+
+                        const scripts = contentDiv.querySelectorAll('script');
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                    } else {
+                        alert("Entschlüsselung fehlgeschlagen. Falsches Passwort?");
+                    }
                 } catch (e) {
-                    document.body.innerHTML += '<p style="color: red;">Fehler beim Dekodieren der URL. Möglicherweise enthält die URL ungültige Zeichen.</p>';
+                    document.body.innerHTML += '<p style="color: red;">Fehler beim Entschlüsseln der Daten. Überprüfen Sie das Passwort.</p>';
                 }
             } else {
-                document.body.innerHTML += '<p style="color: red;">Kein gültiger HTML-Inhalt in der URL gefunden. Bitte die URL in der Form ".html?&lt;html-code&gt;" aufrufen.</p>';
+                document.body.innerHTML += '<p style="color: red;">Kein verschlüsselter Inhalt in der URL gefunden. Bitte die URL in der Form ".html?data=#<encrypted-data>" aufrufen.</p>';
             }
 
-            // Buttons hinzufügen
-            e699d95ca46dc29080bebbf9a0962f5947e0ce2d5727416aba74b4d177e84c63();
+            addFloatingButtons();
         })();
     </script>
 </body>
