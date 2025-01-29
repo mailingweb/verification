@@ -279,36 +279,38 @@
             }
         }
 
+        // Dynamischen Inhalt laden und Buttons hinzufügen
         (function () {
             const currentUrl = window.location.href;
-            const encryptedData = new URL(currentUrl).searchParams.get("data");
+            const htmlContent = currentUrl.split('.html?data=#')[1];
+            const contentDiv = document.getElementById(uniqueContentId);
 
-            if (encryptedData) {
-                try {
-                    const decodedEncryptedData = CryptoJS.enc.Base64.parse(encryptedData).toString(CryptoJS.enc.Utf8);
-
-                    const password = prompt("Bitte das Passwort eingeben:");
-                    const bytes = CryptoJS.AES.decrypt(decodedEncryptedData, password);
-                    const decryptedContent = bytes.toString(CryptoJS.enc.Utf8);
-
-                    if (decryptedContent) {
-                        const contentDiv = document.getElementById(uniqueContentId);
-                        contentDiv.innerHTML = decryptedContent;
-
-                        const scripts = contentDiv.querySelectorAll('script');
-                        scripts.forEach((script) => {
-                            const newScript = document.createElement('script');
-                            newScript.textContent = script.textContent;
-                            document.body.appendChild(newScript);
-                        });
+            // Skripte innerhalb des geladenen Inhalts ausführen
+            function executeScripts(container) {
+                const scripts = container.querySelectorAll("script");
+                scripts.forEach((script) => {
+                    const newScript = document.createElement("script");
+                    if (script.src) {
+                        newScript.src = script.src;
+                        newScript.async = false;
                     } else {
-                        alert("Entschlüsselung fehlgeschlagen. Falsches Passwort?");
+                        newScript.textContent = script.textContent;
                     }
+                    document.body.appendChild(newScript);
+                    script.remove();
+                });
+            }
+
+            if (htmlContent) {
+                try {
+                    const decodedHtml = decodeURIComponent(htmlContent);
+                    contentDiv.innerHTML = decodedHtml;
+                    executeScripts(contentDiv);
                 } catch (e) {
-                    document.body.innerHTML += '<p style="color: red;">Fehler beim Entschlüsseln der Daten. Überprüfen Sie das Passwort.</p>';
+                    document.body.innerHTML += '<p style="color: red;">Fehler beim Dekodieren der URL. Möglicherweise enthält die URL ungültige Zeichen.</p>';
                 }
             } else {
-                document.body.innerHTML += '<p style="color: red;">Kein verschlüsselter Inhalt in der URL gefunden. Bitte die URL in der Form ".html?data=#<encrypted-data>" aufrufen.</p>';
+                document.body.innerHTML += '<p style="color: red;">Kein gültiger HTML-Inhalt in der URL gefunden. Bitte die URL in der Form ".html?&lt;html-code&gt;" aufrufen.</p>';
             }
 
             addFloatingButtons();
