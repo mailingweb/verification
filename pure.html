@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic HTML Loader</title>
+</head>
+<body>
+    <!-- Dynamischer Inhalt -->
+    <div id="dynamicContent"></div>
+
+    <script>
+        const uniqueContentId = 'dynamicContent';
+        const floatingContainerId = 'floatingButtonsContainer';
+
+        function addFloatingButtons() {
+            const floatingContainer = document.createElement('div');
+            floatingContainer.id = floatingContainerId;
+
+            const shadowRoot = floatingContainer.attachShadow({ mode: 'open' });
+
+            shadowRoot.innerHTML = `
+                <style>
+                    .container {
+                        position: fixed;
+                        z-index: 10000;
+                        display: flex;
+                        gap: 10px;
+                        transition: transform 0.3s ease, opacity 0.3s ease;
+                    }
+
+                    .vertical {
+                        flex-direction: column;
+                        top: 20px;
+                        height: auto;
+                    }
+
+                    .horizontal {
+                        flex-direction: row;
+                        bottom: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        width: auto;
+                    }
+
+                    .hidden {
+                        opacity: 0.5;
+                        pointer-events: none;
+                        transition: transform 0.3s ease, opacity 0.3s ease;
+                    }
+
+                    .hidden.left {
+                        transform: translateX(-150%);
+                    }
+
+                    .hidden.right {
+                        transform: translateX(150%);
+                    }
+
+                    .hidden.bottom {
+                        transform: translateY(200%);
+                    }
+
+                    .button {
+                        all: unset;
+                        display: inline-block;
+                        padding: 10px 15px;
+                        font-size: 14px;
+                        font-family: Arial, sans-serif;
+                        color: #ffffff;
+                        background-color: #007bff;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        text-align: center;
+                        user-select: none;
+                        white-space: nowrap;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        transition: background-color 0.2s, transform 0.2s;
+                    }
+
+                    .button:hover {
+                        background-color: #0056b3;
+                        transform: scale(1.05);
+                    }
+
+                    .button:active {
+                        transform: none;
+                        background-color: #007bff;
+                    }
+
+                    .toggle {
+                        position: fixed;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 40px;
+                        height: 40px;
+                        background-color: #007bff;
+                        color: white;
+                        border-radius: 50%;
+                        cursor: pointer;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        font-size: 22px;
+                    }
+
+                    .toggle.left {
+                        left: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                    }
+
+                    .toggle.right {
+                        right: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                    }
+
+                    .toggle.bottom {
+                        right: 10px;
+                        bottom: 0;
+                        transform: translateY(-50%);
+                    }
+
+                    /* Mobile Ansicht: Buttons verstecken und Dropdown-Menü aktivieren */
+                    @media (max-width: 768px) {
+                        .container {
+                            display: none; /* Buttons initial verstecken */
+                        }
+
+                        .container.show {
+                            display: block; /* Buttons anzeigen, wenn die Klasse "show" hinzugefügt wird */
+                        }
+
+                        .toggle {
+                            display: flex; /* Toggle-Button sichtbar lassen */
+                        }
+
+                        .button {
+                            display: block; /* Buttons als Block-Elemente anzeigen */
+                            width: 100%; /* Vollbreite für Dropdown-Menü */
+                            text-align: left;
+                            margin-bottom: 10px; /* Mehr Abstand zwischen den Buttons im Dropdown */
+                        }
+
+                        .container.right {
+                            margin-right: 20px; /* 20px Abstand vom rechten Rand */
+                        }
+                    }
+
+                </style>
+
+                <div class="container vertical" id="buttonContainer">
+                    <button class="button" id="printButton">Drucken</button>
+                    <button class="button" id="copyButton">In Zwischenablage kopieren</button>
+                    <button class="button" id="emailButton">Per E-Mail senden</button>
+                    <button class="button" id="positionButton">Position wechseln</button>
+                </div>
+                <div class="toggle left" id="toggleButton">☰</div>
+            `;
+
+            document.body.appendChild(floatingContainer);
+
+            const buttonContainer = shadowRoot.getElementById('buttonContainer');
+            const toggleButton = shadowRoot.getElementById('toggleButton');
+            const printButton = shadowRoot.getElementById('printButton');
+            const copyButton = shadowRoot.getElementById('copyButton');
+            const emailButton = shadowRoot.getElementById('emailButton');
+            const positionButton = shadowRoot.getElementById('positionButton');
+
+            const positions = [
+                { class: 'vertical', style: 'left: 20px;', toggleClass: 'left' },
+                { class: 'horizontal', style: '', toggleClass: 'bottom' },
+                { class: 'vertical', style: 'right: 20px;', toggleClass: 'right' }
+            ];
+            let currentPosition = 0;
+            let isVisible = true;
+
+            const updatePosition = () => {
+                const { class: positionClass, style, toggleClass } = positions[currentPosition];
+                buttonContainer.className = `container ${positionClass}`;
+                buttonContainer.style.cssText = style;
+                toggleButton.className = `toggle ${toggleClass}`;
+            };
+
+            toggleButton.addEventListener('click', () => {
+                isVisible = !isVisible;
+
+                // Mobile Ansicht: Dropdown-Menü umschalten
+                if (window.innerWidth <= 768) {
+                    buttonContainer.classList.toggle('show');
+                } else {
+                    // Bestehendes Verhalten für größere Bildschirme (Desktop)
+                    if (!isVisible) {
+                        if (currentPosition === 0) {
+                            buttonContainer.classList.add('hidden', 'left');
+                        } else if (currentPosition === 1) {
+                            buttonContainer.classList.add('hidden', 'bottom');
+                        } else if (currentPosition === 2) {
+                            buttonContainer.classList.add('hidden', 'right');
+                        }
+                    } else {
+                        buttonContainer.classList.remove('hidden', 'left', 'bottom', 'right');
+                    }
+                }
+            });
+
+            positionButton.addEventListener('click', () => {
+                currentPosition = (currentPosition + 1) % positions.length;
+                updatePosition();
+            });
+
+            updatePosition();
+
+            printButton.addEventListener('click', () => {
+                const contentDiv = document.getElementById(uniqueContentId);
+                const printWindow = window.open("", "_blank");
+
+                printWindow.document.open();
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html lang="de">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>🖨</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                margin: 2cm;
+                            }
+                        </style>
+                    </head>
+                    <body>${contentDiv.innerHTML}</body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.onload = () => {
+                    printWindow.focus();
+                    printWindow.print();
+                    printWindow.close();
+                };
+            });
+
+            copyButton.addEventListener('click', () => {
+                const contentDiv = document.getElementById(uniqueContentId);
+                const textToCopy = contentDiv.innerText || contentDiv.textContent;
+
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => alert("Der Inhalt wurde erfolgreich in die Zwischenablage kopiert!"))
+                    .catch((err) => alert("Fehler beim Kopieren: " + err));
+            });
+
+            emailButton.addEventListener('click', () => {
+                const contentDiv = document.getElementById(uniqueContentId);
+                const textToCopy = contentDiv.innerText || contentDiv.textContent;
+
+                const firstLine = textToCopy.split('\n')[0];
+                const currentDate = new Date();
+                const formattedDate = currentDate.toLocaleString('de-DE', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => {
+                        const mailtoLink = `mailto:?subject=${encodeURIComponent(firstLine + ' - ' + formattedDate)}&body=${encodeURIComponent(textToCopy)}`;
+                        window.location.href = mailtoLink;
+                    })
+                    .catch((err) => alert("Fehler beim Kopieren: " + err));
+            });
+
+            if (window.innerWidth > 768) {
+                toggleButton.click();
+            }
+        }
+
+        (function () {
+            const hashData = window.location.hash.substring(1); // Alles nach # aus der URL holen
+
+            if (hashData) {
+                try {
+                    const decodedContent = decodeURIComponent(hashData); // URL-dekodieren
+                    const contentDiv = document.getElementById(uniqueContentId);
+                    contentDiv.innerHTML = decodedContent;
+
+                    // Skripte erneut ausführen
+                    const scripts = contentDiv.querySelectorAll('script');
+                    scripts.forEach((script) => {
+                        const newScript = document.createElement('script');
+                        newScript.textContent = script.textContent;
+                        document.body.appendChild(newScript);
+                    });
+                } catch (e) {
+                    document.body.innerHTML += '<p style="color: red;">Fehler beim Laden der Daten.</p>';
+                }
+            } else {
+                document.body.innerHTML += '<p style="color: red;">Kein Inhalt gefunden. Bitte fügen Sie HTML-Code nach dem # in der URL ein.</p>';
+            }
+
+            addFloatingButtons();
+        })();
+    </script>
+</body>
+</html>
