@@ -255,9 +255,32 @@
     </style>
 </head>
 <body>
+    <div class="container">
+        <div class="header">
+            <h1>Dienstleister-Vergleich 2025</h1>
+            <h2>Ihr individuelles Ergebnis</h2>
+            <div class="stats">
+                <div class="stats-left">
+                    Wir haben Ihnen basierend auf Ihren Schilderungen die für Ihr Anliegen bestmöglichen Dienstleistungen herausgesucht, die zu Ihren Voraussetzungen passen.
+                </div>
+                <div class="stats-right">
+                    <div class="stat-box">
+                        <div class="stat-number" id="checkedAmount">0</div>
+                        <div class="stat-label">Überprüfte Einträge</div>
+                    </div>
+                </div>
+            </div>
+            <div class="criteria-container">
+                <div class="criteria-scroll" id="criteriaContainer">
+                </div>
+            </div>
+        </div>
+
+        <div class="services-grid" id="servicesContainer">
+        </div>
+    </div>
     <!-- Dynamischer Inhalt -->
     <div id="dynamicContent"></div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
     <script>
         const uniqueContentId = 'dynamicContent';
@@ -572,6 +595,77 @@
 
             addFloatingButtons();
         })();
+    </script>
+    <script>
+        function renderCheckedAmount() {
+            const container = document.querySelector('.stat-number');
+            container.textContent = checkedAmount;
+        }
+
+        function renderCriteria() {
+            const container = document.getElementById('criteriaContainer');
+            container.innerHTML = criteria.map(criterion => `
+                <div class="criteria-item">
+                    <div class="criteria-label">${criterion.label}</div>
+                    <div class="criteria-value">${criterion.value}</div>
+                </div>
+            `).join('');
+        }
+
+        function createStarRating(rating) {
+            const fullStars = Math.floor(rating);
+            let stars = '';
+            for (let i = 0; i < 5; i++) {
+                stars += i < fullStars ? '★' : '☆';
+            }
+            return `${stars} (${rating})`;
+        }
+
+        function renderServices() {
+            const container = document.getElementById('servicesContainer');
+            container.innerHTML = services.map(service => `
+                <div class="service-card">
+                    <div class="service-header">
+                        <div class="service-logo">${service.name.substring(0, 2)}</div>
+                        <div class="service-info">
+                            <div class="service-name">${service.name}</div>
+                            <div class="rating">${createStarRating(service.rating)}</div>
+                        </div>
+                        <div class="service-action">
+                            <a href="${service.contact}" class="btn-offer">Kontakt aufnehmen</a>
+                            <div class="estimated-price">Geschätzte Kosten: ${service.estimatedPrice}</div>
+                        </div>
+                    </div>
+                    <div class="service-details">
+                        <div class="details-container">
+                            <div class="details-scroll">
+                                ${service.details.map(detail => `
+                                    <div class="detail-item">
+                                        <div class="detail-label">${detail.title}</div>
+                                        <div class="detail-value">${detail.text}</div>
+                                    </div>
+                                `).join('')}
+                                <div class="detail-item">
+                                    <div class="detail-label">Spezialisierungen</div>
+                                    <div class="detail-value">
+                                        <div class="specializations">
+                                            ${service.specializations.map(s => `
+                                                <span class="specialization">${s}</span>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initial render of both criteria and services
+        renderCheckedAmount();
+        renderCriteria();
+        renderServices();
     </script>
 </body>
 </html>
