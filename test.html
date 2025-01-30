@@ -3,7 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic HTML Loader</title>
+    <title>№1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header h2 {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stats-left {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .stats-right {
+            display: flex;
+            gap: 40px;
+        }
+
+        .stat-box {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .criteria-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+            margin-bottom: 30px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .criteria-scroll {
+            display: inline-flex;
+            gap: 20px;
+            padding: 0 10px;
+        }
+
+        .criteria-item {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 200px;
+            max-width: 200px; /* Fixed width */
+        }
+
+        .criteria-label {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .criteria-value {
+            font-size: 14px;
+            color: #666;
+            white-space: normal; /* Allow text wrapping */
+            word-wrap: break-word; /* Break long words */
+        }
+
+        .services-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .service-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .service-logo {
+            width: 80px;
+            height: 80px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .service-info {
+            flex-grow: 1;
+            margin-left: 20px;
+        }
+
+        .service-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .rating {
+            color: #ffc107;
+        }
+
+        .service-action {
+            text-align: right;
+        }
+
+        .btn-offer {
+            background-color: #4662FF;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .estimated-price {
+            color: #22c55e;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .service-details {
+            margin-bottom: 20px;
+        }
+
+        .details-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .details-scroll {
+            display: inline-flex;
+            gap: 20px;
+            padding: 0 10px;
+        }
+
+        .detail-item {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 200px;
+            max-width: 200px; /* Fixed width */
+        }
+
+        .detail-label {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            white-space: normal; /* Allow text wrapping */
+            word-wrap: break-word; /* Break long words */
+        }
+
+        .specializations {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .specialization {
+            background-color: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .service-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .service-info {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .service-action {
+                width: 100%;
+                text-align: center;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+
+            .stats-right {
+                width: 100%;
+                justify-content: space-around;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Dynamischer Inhalt -->
@@ -122,33 +371,29 @@
                         transform: translateY(-50%);
                     }
 
+                    /* Mobile Ansicht: Buttons verstecken und Dropdown-Menü aktivieren */
                     @media (max-width: 768px) {
                         .container {
-                            display: none; /* Initial verstecken */
-                            opacity: 0;
-                            transform: translateY(-20px);
-                            transition: opacity 0.3s ease, transform 0.3s ease;
+                            display: none; /* Buttons initial verstecken */
                         }
 
                         .container.show {
-                            display: block;
-                            opacity: 1; 
-                            transform: translateY(0);
+                            display: block; /* Buttons anzeigen, wenn die Klasse "show" hinzugefügt wird */
                         }
 
                         .toggle {
-                            display: flex;
+                            display: flex; /* Toggle-Button sichtbar lassen */
                         }
 
                         .button {
-                            display: block;
-                            width: 100%;
+                            display: block; /* Buttons als Block-Elemente anzeigen */
+                            width: 100%; /* Vollbreite für Dropdown-Menü */
                             text-align: left;
-                            margin-bottom: 10px;
+                            margin-bottom: 10px; /* Mehr Abstand zwischen den Buttons im Dropdown */
                         }
 
                         .container.right {
-                            margin-right: 100px; /* 20px Abstand vom rechten Rand */
+                            margin-right: 20px; /* 20px Abstand vom rechten Rand */
                         }
                     }
 
@@ -216,10 +461,14 @@
 
             updatePosition();
 
-            printButton.addEventListener('click', () => {
-                const contentDiv = document.getElementById(uniqueContentId);
-                const printWindow = window.open("", "_blank");
+            function getVisibleText() {
+                return document.body.innerText || document.body.textContent;
+            }
 
+            printButton.addEventListener('click', () => {
+                const visibleText = getVisibleText().replace(/\n/g, "<br>");
+
+                const printWindow = window.open("", "_blank");
                 printWindow.document.open();
                 printWindow.document.write(`
                     <!DOCTYPE html>
@@ -232,10 +481,11 @@
                             body {
                                 font-family: Arial, sans-serif;
                                 margin: 2cm;
+                                white-space: pre-wrap;
                             }
                         </style>
                     </head>
-                    <body>${contentDiv.innerHTML}</body>
+                    <body>${visibleText}</body>
                     </html>
                 `);
                 printWindow.document.close();
@@ -247,17 +497,15 @@
             });
 
             copyButton.addEventListener('click', () => {
-                const contentDiv = document.getElementById(uniqueContentId);
-                const textToCopy = contentDiv.innerText || contentDiv.textContent;
+                const textToCopy = getVisibleText();
 
                 navigator.clipboard.writeText(textToCopy)
-                    .then(() => alert("Der Inhalt wurde erfolgreich in die Zwischenablage kopiert!"))
+                    .then(() => alert("Der sichtbare Inhalt wurde erfolgreich in die Zwischenablage kopiert!"))
                     .catch((err) => alert("Fehler beim Kopieren: " + err));
             });
 
             emailButton.addEventListener('click', () => {
-                const contentDiv = document.getElementById(uniqueContentId);
-                const textToCopy = contentDiv.innerText || contentDiv.textContent;
+                const textToCopy = getVisibleText();
 
                 const firstLine = textToCopy.split('\n')[0];
                 const currentDate = new Date();
@@ -281,24 +529,31 @@
             if (window.innerWidth > 768) {
                 toggleButton.click();
             }
+
         }
 
         (function () {
             const currentUrl = window.location.href;
-            const encryptedData = new URL(currentUrl).searchParams.get("data");
 
-            if (encryptedData) {
+            // Extrahiert den Teil nach dem '#', was der Fragment-Teil der URL ist
+            const hashData = currentUrl.split('#')[1]; // Teil nach dem '#'
+
+            if (hashData) {
                 try {
-                    const decodedEncryptedData = CryptoJS.enc.Base64.parse(encryptedData).toString(CryptoJS.enc.Utf8);
+                    // Bas64-decodieren der verschlüsselten Daten
+                    const decodedEncryptedData = CryptoJS.enc.Base64.parse(hashData).toString(CryptoJS.enc.Utf8);
 
+                    // Passwortabfrage
                     const password = prompt("Bitte das Passwort eingeben:");
                     const bytes = CryptoJS.AES.decrypt(decodedEncryptedData, password);
                     const decryptedContent = bytes.toString(CryptoJS.enc.Utf8);
 
                     if (decryptedContent) {
+                        // Füge den entschlüsselten Inhalt in das div ein
                         const contentDiv = document.getElementById(uniqueContentId);
                         contentDiv.innerHTML = decryptedContent;
 
+                        // Extrahiere und führe alle Skripte aus, die im Inhalt enthalten sind
                         const scripts = contentDiv.querySelectorAll('script');
                         scripts.forEach((script) => {
                             const newScript = document.createElement('script');
@@ -312,7 +567,7 @@
                     document.body.innerHTML += '<p style="color: red;">Fehler beim Entschlüsseln der Daten. Überprüfen Sie das Passwort.</p>';
                 }
             } else {
-                document.body.innerHTML += '<p style="color: red;">Kein verschlüsselter Inhalt in der URL gefunden. Bitte die URL in der Form ".html?data=<encrypted-data>" aufrufen.</p>';
+                document.body.innerHTML += '<p style="color: red;">Kein verschlüsselter Inhalt im Fragment gefunden. Bitte die URL in der Form ".html#<encrypted-data>" aufrufen.</p>';
             }
 
             addFloatingButtons();
