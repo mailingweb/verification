@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>№1</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .header h2 {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stats-left {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .stats-right {
+            display: flex;
+            gap: 40px;
+        }
+
+        .stat-box {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .criteria-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+            margin-bottom: 30px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .criteria-scroll {
+            display: inline-flex;
+            gap: 20px;
+            padding: 0 10px;
+        }
+
+        .criteria-item {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 200px;
+            max-width: 200px; /* Fixed width */
+        }
+
+        .criteria-label {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .criteria-value {
+            font-size: 14px;
+            color: #666;
+            white-space: normal; /* Allow text wrapping */
+            word-wrap: break-word; /* Break long words */
+        }
+
+        .services-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .service-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .service-logo {
+            width: 80px;
+            height: 80px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .service-info {
+            flex-grow: 1;
+            margin-left: 20px;
+        }
+
+        .service-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .rating {
+            color: #ffc107;
+        }
+
+        .service-action {
+            text-align: right;
+        }
+
+        .btn-offer {
+            background-color: #4662FF;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+
+        .estimated-price {
+            color: #22c55e;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .service-details {
+            margin-bottom: 20px;
+        }
+
+        .details-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .details-scroll {
+            display: inline-flex;
+            gap: 20px;
+            padding: 0 10px;
+        }
+
+        .detail-item {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 200px;
+            max-width: 200px; /* Fixed width */
+        }
+
+        .detail-label {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            white-space: normal; /* Allow text wrapping */
+            word-wrap: break-word; /* Break long words */
+        }
+
+        .specializations {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .specialization {
+            background-color: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .service-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .service-info {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .service-action {
+                width: 100%;
+                text-align: center;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+
+            .stats-right {
+                width: 100%;
+                justify-content: space-around;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Dynamischer Inhalt -->
+    <div id="dynamicContent"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+    <script>
+        const uniqueContentId = 'dynamicContent';
+        const floatingContainerId = 'floatingButtonsContainer';
+
+        function addFloatingButtons() {
+            const floatingContainer = document.createElement('div');
+            floatingContainer.id = floatingContainerId;
+
+            const shadowRoot = floatingContainer.attachShadow({ mode: 'open' });
+
+            shadowRoot.innerHTML = `
+                <style>
+                    .container {
+                        position: fixed;
+                        z-index: 10000;
+                        display: flex;
+                        gap: 10px;
+                        transition: transform 0.3s ease, opacity 0.3s ease;
+                    }
+
+                    .vertical {
+                        flex-direction: column;
+                        top: 20px;
+                        height: auto;
+                    }
+
+                    .horizontal {
+                        flex-direction: row;
+                        bottom: 20px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        width: auto;
+                    }
+
+                    .hidden {
+                        opacity: 0.5;
+                        pointer-events: none;
+                        transition: transform 0.3s ease, opacity 0.3s ease;
+                    }
+
+                    .hidden.left {
+                        transform: translateX(-150%);
+                    }
+
+                    .hidden.right {
+                        transform: translateX(150%);
+                    }
+
+                    .hidden.bottom {
+                        transform: translateY(200%);
+                    }
+
+                    .button {
+                        all: unset;
+                        display: inline-block;
+                        padding: 10px 15px;
+                        font-size: 14px;
+                        font-family: Arial, sans-serif;
+                        color: #ffffff;
+                        background-color: #007bff;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        text-align: center;
+                        user-select: none;
+                        white-space: nowrap;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        transition: background-color 0.2s, transform 0.2s;
+                    }
+
+                    .button:hover {
+                        background-color: #0056b3;
+                        transform: scale(1.05);
+                    }
+
+                    .button:active {
+                        transform: none;
+                        background-color: #007bff;
+                    }
+
+                    .toggle {
+                        position: fixed;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 40px;
+                        height: 40px;
+                        background-color: #007bff;
+                        color: white;
+                        border-radius: 50%;
+                        cursor: pointer;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        font-size: 22px;
+                    }
+
+                    .toggle.left {
+                        left: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                    }
+
+                    .toggle.right {
+                        right: 10px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                    }
+
+                    .toggle.bottom {
+                        right: 10px;
+                        bottom: 0;
+                        transform: translateY(-50%);
+                    }
+
+                    /* Mobile Ansicht: Buttons verstecken und Dropdown-Menü aktivieren */
+                    @media (max-width: 768px) {
+                        .container {
+                            display: none; /* Buttons initial verstecken */
+                        }
+
+                        .container.show {
+                            display: block; /* Buttons anzeigen, wenn die Klasse "show" hinzugefügt wird */
+                        }
+
+                        .toggle {
+                            display: flex; /* Toggle-Button sichtbar lassen */
+                        }
+
+                        .button {
+                            display: block; /* Buttons als Block-Elemente anzeigen */
+                            width: 100%; /* Vollbreite für Dropdown-Menü */
+                            text-align: left;
+                            margin-bottom: 10px; /* Mehr Abstand zwischen den Buttons im Dropdown */
+                        }
+
+                        .container.right {
+                            margin-right: 20px; /* 20px Abstand vom rechten Rand */
+                        }
+                    }
+
+                </style>
+
+                <div class="container vertical" id="buttonContainer">
+                    <button class="button" id="printButton">Drucken</button>
+                    <button class="button" id="copyButton">In Zwischenablage kopieren</button>
+                    <button class="button" id="emailButton">Per E-Mail senden</button>
+                    <button class="button" id="positionButton">Position wechseln</button>
+                </div>
+                <div class="toggle left" id="toggleButton">☰</div>
+            `;
+
+            document.body.appendChild(floatingContainer);
+
+            const buttonContainer = shadowRoot.getElementById('buttonContainer');
+            const toggleButton = shadowRoot.getElementById('toggleButton');
+            const printButton = shadowRoot.getElementById('printButton');
+            const copyButton = shadowRoot.getElementById('copyButton');
+            const emailButton = shadowRoot.getElementById('emailButton');
+            const positionButton = shadowRoot.getElementById('positionButton');
+
+            const positions = [
+                { class: 'vertical', style: 'left: 20px;', toggleClass: 'left' },
+                { class: 'horizontal', style: '', toggleClass: 'bottom' },
+                { class: 'vertical', style: 'right: 20px;', toggleClass: 'right' }
+            ];
+            let currentPosition = 0;
+            let isVisible = true;
+
+            const updatePosition = () => {
+                const { class: positionClass, style, toggleClass } = positions[currentPosition];
+                buttonContainer.className = `container ${positionClass}`;
+                buttonContainer.style.cssText = style;
+                toggleButton.className = `toggle ${toggleClass}`;
+            };
+
+            toggleButton.addEventListener('click', () => {
+                isVisible = !isVisible;
+
+                // Mobile Ansicht: Dropdown-Menü umschalten
+                if (window.innerWidth <= 768) {
+                    buttonContainer.classList.toggle('show');
+                } else {
+                    // Bestehendes Verhalten für größere Bildschirme (Desktop)
+                    if (!isVisible) {
+                        if (currentPosition === 0) {
+                            buttonContainer.classList.add('hidden', 'left');
+                        } else if (currentPosition === 1) {
+                            buttonContainer.classList.add('hidden', 'bottom');
+                        } else if (currentPosition === 2) {
+                            buttonContainer.classList.add('hidden', 'right');
+                        }
+                    } else {
+                        buttonContainer.classList.remove('hidden', 'left', 'bottom', 'right');
+                    }
+                }
+            });
+
+            positionButton.addEventListener('click', () => {
+                currentPosition = (currentPosition + 1) % positions.length;
+                updatePosition();
+            });
+
+            updatePosition();
+
+            function getVisibleText() {
+                return document.body.innerText || document.body.textContent;
+            }
+
+            printButton.addEventListener('click', () => {
+                const visibleText = getVisibleText().replace(/\n/g, "<br>");
+
+                const printWindow = window.open("", "_blank");
+                printWindow.document.open();
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html lang="de">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>🖨</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                margin: 2cm;
+                                white-space: pre-wrap;
+                            }
+                        </style>
+                    </head>
+                    <body>${visibleText}</body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.onload = () => {
+                    printWindow.focus();
+                    printWindow.print();
+                    printWindow.close();
+                };
+            });
+
+            copyButton.addEventListener('click', () => {
+                const textToCopy = getVisibleText();
+
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => alert("Der sichtbare Inhalt wurde erfolgreich in die Zwischenablage kopiert!"))
+                    .catch((err) => alert("Fehler beim Kopieren: " + err));
+            });
+
+            emailButton.addEventListener('click', () => {
+                const textToCopy = getVisibleText();
+
+                const firstLine = textToCopy.split('\n')[0];
+                const currentDate = new Date();
+                const formattedDate = currentDate.toLocaleString('de-DE', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => {
+                        const mailtoLink = `mailto:?subject=${encodeURIComponent(firstLine + ' - ' + formattedDate)}&body=${encodeURIComponent(textToCopy)}`;
+                        window.location.href = mailtoLink;
+                    })
+                    .catch((err) => alert("Fehler beim Kopieren: " + err));
+            });
+
+            if (window.innerWidth > 768) {
+                toggleButton.click();
+            }
+
+        }
+
+        (function () {
+            const currentUrl = window.location.href;
+            const encryptedData = new URL(currentUrl).searchParams.get("data");
+
+            if (encryptedData) {
+                try {
+                    const decodedEncryptedData = CryptoJS.enc.Base64.parse(encryptedData).toString(CryptoJS.enc.Utf8);
+
+                    const password = prompt("Bitte das Passwort eingeben:");
+                    const bytes = CryptoJS.AES.decrypt(decodedEncryptedData, password);
+                    const decryptedContent = bytes.toString(CryptoJS.enc.Utf8);
+
+                    if (decryptedContent) {
+                        const contentDiv = document.getElementById(uniqueContentId);
+                        contentDiv.innerHTML = decryptedContent;
+
+                        const scripts = contentDiv.querySelectorAll('script');
+                        scripts.forEach((script) => {
+                            const newScript = document.createElement('script');
+                            newScript.textContent = script.textContent;
+                            document.body.appendChild(newScript);
+                        });
+                    } else {
+                        alert("Entschlüsselung fehlgeschlagen. Falsches Passwort?");
+                    }
+                } catch (e) {
+                    document.body.innerHTML += '<p style="color: red;">Fehler beim Entschlüsseln der Daten. Überprüfen Sie das Passwort.</p>';
+                }
+            } else {
+                document.body.innerHTML += '<p style="color: red;">Kein verschlüsselter Inhalt in der URL gefunden. Bitte die URL in der Form ".html?data=<encrypted-data>" aufrufen.</p>';
+            }
+
+            addFloatingButtons();
+        })();
+    </script>
+</body>
+</html>
