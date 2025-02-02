@@ -3,12 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic HTML Loader</title>
+    <title>Lern App</title>
+    <style>
+        /* Vorheriges CSS bleibt bestehen */
+        :root {
+            --primary-color: #3498db;
+            --background-color: #f5f6fa;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+            --secondary-text-color: #666666;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --button-hover: #f0f0f0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #5dade2;
+                --background-color: #1a1a1a;
+                --card-background: #2c2c2c;
+                --text-color: #e0e0e0;
+                --secondary-text-color: #b0b0b0;
+                --shadow: 0 2px 10px rgba(0,0,0,0.3);
+                --button-hover: #3c3c3c;
+            }
+        }
+
+        [data-theme="light"] {
+            --primary-color: #3498db;
+            --background-color: #f5f6fa;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+            --secondary-text-color: #666666;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --button-hover: #f0f0f0;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #5dade2;
+            --background-color: #1a1a1a;
+            --card-background: #2c2c2c;
+            --text-color: #e0e0e0;
+            --secondary-text-color: #b0b0b0;
+            --shadow: 0 2px 10px rgba(0,0,0,0.3);
+            --button-hover: #3c3c3c;
+        }
+
+        /* Bisheriges CSS bleibt bestehen */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        /* Neue Styles für die Kriterien */
+        .criteria-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+            margin: 15px 0;
+            -webkit-overflow-scrolling: touch;
+            
+            /* Hide scrollbar for Chrome, Safari and Opera */
+            &::-webkit-scrollbar {
+                display: none;
+            }
+            
+            /* Hide scrollbar for IE, Edge and Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .criteria-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .criteria-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .criteria-container::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        .criteria-scroll {
+            display: inline-flex;
+            gap: 20px;
+            padding: 0 10px;
+        }
+
+        .criteria-item {
+            background: var(--card-background);
+            border: 1px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 200px;
+            max-width: 200px;
+            transition: background-color 0.3s ease;
+        }
+
+        .criteria-label {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .criteria-value {
+            font-size: 14px;
+            color: var(--secondary-text-color);
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+        /* Vorheriges CSS bleibt unverändert */
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding-bottom: 40px;
+        }
+
+        .card {
+            background: var(--card-background);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stat-item {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--secondary-text-color);
+            transition: color 0.3s ease;
+        }
+
+        /* Neues CSS für die Header-Bereiche */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .copy-button {
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .copy-button:hover {
+            background: var(--button-hover);
+        }
+
+        .copy-button:active {
+            transform: scale(0.98);
+        }
+
+        .copy-success {
+            background-color: #2ecc71;
+            color: white;
+            border-color: #2ecc71;
+        }
+
+        h2 {
+            margin-bottom: 0;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .result-text {
+            line-height: 1.6;
+        }
+
+        .sources {
+            font-size: 14px;
+            color: var(--secondary-text-color);
+            transition: color 0.3s ease;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .stat-item {
+                min-width: 100px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="card">
+            <h2>Statistik über deine Anfragen</h2>
+            <div class="stats" id="stats-container">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-header">
+                <h2>Deine Frage</h2>
+            </div>
+            <div id="question-container" class="question-text">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            <div class="criteria-container">
+                <div class="criteria-scroll" id="questionCriteriaContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-header">
+                <h2>Dein Ergebnis</h2>
+                <button class="copy-button" onclick="copyContent('result-container', this)">
+                    Kopieren
+                </button>
+            </div>
+            <div id="result-container" class="result-text">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            <div class="criteria-container">
+                <div class="criteria-scroll" id="resultCriteriaContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-header">
+                <h2>Quellen</h2>
+                <button class="copy-button" onclick="copyContent('sources-container', this)">
+                    Kopieren
+                </button>
+            </div>
+            <div id="sources-container" class="sources">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
     <!-- Dynamischer Inhalt -->
     <div id="dynamicContent"></div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
     <script>
         const uniqueContentId = 'dynamicContent';
@@ -22,6 +304,20 @@
 
             shadowRoot.innerHTML = `
                 <style>
+                    :host {
+                        --button-bg: #007bff;
+                        --button-hover: #0056b3;
+                        --button-text: #ffffff;
+                        --shadow-color: rgba(0, 0, 0, 0.1);
+                    }
+
+                    :host(.dark-mode) {
+                        --button-bg: #2d3748;
+                        --button-hover: #4a5568;
+                        --button-text: #ffffff;
+                        --shadow-color: rgba(255, 255, 255, 0.1);
+                    }
+
                     .container {
                         position: fixed;
                         z-index: 10000;
@@ -68,25 +364,25 @@
                         padding: 10px 15px;
                         font-size: 14px;
                         font-family: Arial, sans-serif;
-                        color: #ffffff;
-                        background-color: #007bff;
+                        color: var(--button-text);
+                        background-color: var(--button-bg);
                         border-radius: 8px;
                         cursor: pointer;
                         text-align: center;
                         user-select: none;
                         white-space: nowrap;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        box-shadow: 0 4px 6px var(--shadow-color);
                         transition: background-color 0.2s, transform 0.2s;
                     }
 
                     .button:hover {
-                        background-color: #0056b3;
+                        background-color: var(--button-hover);
                         transform: scale(1.05);
                     }
 
                     .button:active {
                         transform: none;
-                        background-color: #007bff;
+                        background-color: var(--button-bg);
                     }
 
                     .toggle {
@@ -96,11 +392,11 @@
                         justify-content: center;
                         width: 40px;
                         height: 40px;
-                        background-color: #007bff;
-                        color: white;
+                        background-color: var(--button-bg);
+                        color: var(--button-text);
                         border-radius: 50%;
                         cursor: pointer;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                        box-shadow: 0 4px 6px var(--shadow-color);
                         font-size: 22px;
                     }
 
@@ -122,38 +418,37 @@
                         transform: translateY(-50%);
                     }
 
-                    /* Mobile Ansicht: Buttons verstecken und Dropdown-Menü aktivieren */
                     @media (max-width: 768px) {
                         .container {
-                            display: none; /* Buttons initial verstecken */
+                            display: none;
                         }
 
                         .container.show {
-                            display: block; /* Buttons anzeigen, wenn die Klasse "show" hinzugefügt wird */
+                            display: block;
                         }
 
                         .toggle {
-                            display: flex; /* Toggle-Button sichtbar lassen */
+                            display: flex;
                         }
 
                         .button {
-                            display: block; /* Buttons als Block-Elemente anzeigen */
-                            width: 100%; /* Vollbreite für Dropdown-Menü */
+                            display: block;
+                            width: 100%;
                             text-align: left;
-                            margin-bottom: 10px; /* Mehr Abstand zwischen den Buttons im Dropdown */
+                            margin-bottom: 10px;
                         }
 
                         .container.right {
-                            margin-right: 20px; /* 20px Abstand vom rechten Rand */
+                            margin-right: 20px;
                         }
                     }
-
                 </style>
 
                 <div class="container vertical" id="buttonContainer">
                     <button class="button" id="printButton">Drucken</button>
                     <button class="button" id="copyButton">In Zwischenablage kopieren</button>
                     <button class="button" id="emailButton">Per E-Mail senden</button>
+                    <button class="button" id="themeButton">Hell/Dunkel</button>
                     <button class="button" id="positionButton">Position wechseln</button>
                 </div>
                 <div class="toggle left" id="toggleButton">☰</div>
@@ -166,7 +461,53 @@
             const printButton = shadowRoot.getElementById('printButton');
             const copyButton = shadowRoot.getElementById('copyButton');
             const emailButton = shadowRoot.getElementById('emailButton');
+            const themeButton = shadowRoot.getElementById('themeButton');
             const positionButton = shadowRoot.getElementById('positionButton');
+
+            // Theme-Management
+            const systemDarkMode = window.matchMedia('(prefers-color-scheme: dark)');
+            let isDarkMode = localStorage.getItem('darkMode');
+            
+            // Wenn noch keine Einstellung gespeichert wurde, Systemeinstellung verwenden
+            if (isDarkMode === null) {
+                isDarkMode = systemDarkMode.matches;
+            } else {
+                isDarkMode = isDarkMode === 'true';
+            }
+            
+            function updateTheme() {
+                if (isDarkMode) {
+                    document.documentElement.classList.add('dark-mode');
+                    floatingContainer.classList.add('dark-mode');
+                    document.body.style.backgroundColor = '#1a202c';
+                    document.body.style.color = '#ffffff';
+                } else {
+                    document.documentElement.classList.remove('dark-mode');
+                    floatingContainer.classList.remove('dark-mode');
+                    document.body.style.backgroundColor = '#ffffff';
+                    document.body.style.color = '#000000';
+                }
+                localStorage.setItem('darkMode', isDarkMode);
+            }
+
+            // Auf Systemänderungen reagieren
+            systemDarkMode.addEventListener('change', (e) => {
+                // Nur reagieren, wenn keine benutzerdefinierte Einstellung existiert
+                if (localStorage.getItem('darkMode') === null) {
+                    isDarkMode = e.matches;
+                    updateTheme();
+                    toggleTheme();
+                }
+            });
+
+            themeButton.addEventListener('click', () => {
+                isDarkMode = !isDarkMode;
+                updateTheme();
+                toggleTheme();
+            });
+
+            // Initial theme setup
+            updateTheme();
 
             const positions = [
                 { class: 'vertical', style: 'left: 20px;', toggleClass: 'left' },
@@ -186,11 +527,9 @@
             toggleButton.addEventListener('click', () => {
                 isVisible = !isVisible;
 
-                // Mobile Ansicht: Dropdown-Menü umschalten
                 if (window.innerWidth <= 768) {
                     buttonContainer.classList.toggle('show');
                 } else {
-                    // Bestehendes Verhalten für größere Bildschirme (Desktop)
                     if (!isVisible) {
                         if (currentPosition === 0) {
                             buttonContainer.classList.add('hidden', 'left');
@@ -212,10 +551,14 @@
 
             updatePosition();
 
-            printButton.addEventListener('click', () => {
-                const contentDiv = document.getElementById(uniqueContentId);
-                const printWindow = window.open("", "_blank");
+            function getVisibleText() {
+                return document.body.innerText || document.body.textContent;
+            }
 
+            printButton.addEventListener('click', () => {
+                const visibleText = getVisibleText().replace(/\n/g, "<br>");
+
+                const printWindow = window.open("", "_blank");
                 printWindow.document.open();
                 printWindow.document.write(`
                     <!DOCTYPE html>
@@ -228,10 +571,11 @@
                             body {
                                 font-family: Arial, sans-serif;
                                 margin: 2cm;
+                                white-space: pre-wrap;
                             }
                         </style>
                     </head>
-                    <body>${contentDiv.innerHTML}</body>
+                    <body>${visibleText}</body>
                     </html>
                 `);
                 printWindow.document.close();
@@ -243,17 +587,15 @@
             });
 
             copyButton.addEventListener('click', () => {
-                const contentDiv = document.getElementById(uniqueContentId);
-                const textToCopy = contentDiv.innerText || contentDiv.textContent;
+                const textToCopy = getVisibleText();
 
                 navigator.clipboard.writeText(textToCopy)
-                    .then(() => alert("Der Inhalt wurde erfolgreich in die Zwischenablage kopiert!"))
+                    .then(() => alert("Der sichtbare Inhalt wurde erfolgreich in die Zwischenablage kopiert!"))
                     .catch((err) => alert("Fehler beim Kopieren: " + err));
             });
 
             emailButton.addEventListener('click', () => {
-                const contentDiv = document.getElementById(uniqueContentId);
-                const textToCopy = contentDiv.innerText || contentDiv.textContent;
+                const textToCopy = getVisibleText();
 
                 const firstLine = textToCopy.split('\n')[0];
                 const currentDate = new Date();
@@ -281,12 +623,11 @@
 
         (function () {
             const currentUrl = window.location.href;
-            const encryptedData = new URL(currentUrl).searchParams.get("data");
+            const hashData = currentUrl.split('#')[1];
 
-            if (encryptedData) {
+            if (hashData) {
                 try {
-                    const decodedEncryptedData = CryptoJS.enc.Base64.parse(encryptedData).toString(CryptoJS.enc.Utf8);
-
+                    const decodedEncryptedData = CryptoJS.enc.Base64.parse(hashData).toString(CryptoJS.enc.Utf8);
                     const password = prompt("Bitte das Passwort eingeben:");
                     const bytes = CryptoJS.AES.decrypt(decodedEncryptedData, password);
                     const decryptedContent = bytes.toString(CryptoJS.enc.Utf8);
@@ -308,11 +649,137 @@
                     document.body.innerHTML += '<p style="color: red;">Fehler beim Entschlüsseln der Daten. Überprüfen Sie das Passwort.</p>';
                 }
             } else {
-                document.body.innerHTML += '<p style="color: red;">Kein verschlüsselter Inhalt in der URL gefunden. Bitte die URL in der Form ".html?data=<encrypted-data>" aufrufen.</p>';
+                document.body.innerHTML += '<p style="color: red;">Kein verschlüsselter Inhalt im Fragment gefunden. Bitte die URL in der Form ".html#<encrypted-data>" aufrufen.</p>';
             }
 
             addFloatingButtons();
         })();
+    </script>
+    <script>
+        // Theme management bleibt unverändert
+        class ThemeManager {
+            constructor() {
+                this.theme = this.getInitialTheme();
+                this.applyTheme(this.theme);
+                this.setupSystemThemeListener();
+            }
+
+            getInitialTheme() {
+                const storedTheme = localStorage.getItem('theme');
+                if (storedTheme) {
+                    return storedTheme;
+                }
+                
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    return 'dark';
+                }
+                
+                return 'light';
+            }
+
+            setupSystemThemeListener() {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                    if (!localStorage.getItem('theme')) {
+                        this.theme = e.matches ? 'dark' : 'light';
+                        this.applyTheme(this.theme);
+                    }
+                });
+            }
+
+            toggleTheme() {
+                this.theme = this.theme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('theme', this.theme);
+                this.applyTheme(this.theme);
+            }
+
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+        }
+
+        // Neue Copy-Funktionalität
+        async function copyContent(elementId, button) {
+            const content = document.getElementById(elementId).textContent;
+            try {
+                await navigator.clipboard.writeText(content);
+                
+                // Visual feedback
+                button.textContent = '✓ Kopiert';
+                button.classList.add('copy-success');
+                
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    button.textContent = 'Kopieren';
+                    button.classList.remove('copy-success');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                button.textContent = '✗ Fehler';
+                setTimeout(() => {
+                    button.textContent = 'Kopieren';
+                }, 2000);
+            }
+        }
+
+        // Bisherige Funktionen bleiben unverändert
+        function populateStats() {
+            const statsContainer = document.getElementById('stats-container');
+            statsContainer.innerHTML = `
+                <div class="stat-item">
+                    <div class="stat-number">${appData.stats.previous}</div>
+                    <div class="stat-label">Bisherige Anfragen</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">${appData.stats.lastHour}</div>
+                    <div class="stat-label">In der letzten Stunde</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">${appData.stats.remaining}</div>
+                    <div class="stat-label">Heute verbleibende Anfragen</div>
+                </div>
+            `;
+        }
+
+        function populateQuestion() {
+            const questionContainer = document.getElementById('question-container');
+            questionContainer.textContent = appData.currentQuestion;
+        }
+
+        function populateResult() {
+            const resultContainer = document.getElementById('result-container');
+            resultContainer.textContent = appData.result;
+        }
+
+        function populateSources() {
+            const sourcesContainer = document.getElementById('sources-container');
+            sourcesContainer.textContent = appData.sources;
+        }
+
+        function renderCriteria(containerId, criteria) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = criteria.map(criterion => `
+                <div class="criteria-item">
+                    <div class="criteria-label">${criterion.label}</div>
+                    <div class="criteria-value">${criterion.value}</div>
+                </div>
+            `).join('');
+        }
+
+        function initializePage() {
+            populateStats();
+            populateQuestion();
+            populateResult();
+            populateSources();
+            renderCriteria('questionCriteriaContainer', questionCriteria);
+            renderCriteria('resultCriteriaContainer', resultCriteria);
+        }
+
+        const themeManager = new ThemeManager();
+        document.addEventListener('DOMContentLoaded', initializePage);
+
+        function toggleTheme() {
+            themeManager.toggleTheme();
+        }
     </script>
 </body>
 </html>
