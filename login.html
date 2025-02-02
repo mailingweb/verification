@@ -117,6 +117,37 @@
             word-wrap: break-word;
         }
 
+        /* Neue Styles für die MetadataInfo */
+        #metadataContainer .criteria-item {
+            background: none; /* Kein Hintergrund */
+            border: none; /* Kein Rahmen */
+            padding: 0px 15px;
+            border-radius: 0; /* Keine abgerundeten Ecken */
+            min-width: 200px;
+            max-width: 200px;
+            text-align: center; /* Zentrierter Text */
+            transition: background-color 0.3s ease;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+        }
+
+        #metadataContainer .criteria-label {
+            font-size: 16px; /* Größere Schriftgröße */
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--primary-color); /* Farbe anpassen, falls gewünscht */
+            text-align: center; /* Zentrierter Text */
+        }
+
+        #metadataContainer .criteria-value {
+            font-size: 14px; /* Schriftgröße anpassen */
+            color: var(--secondary-text-color); /* Farbe anpassen, falls gewünscht */
+            white-space: normal;
+            word-wrap: break-word;
+            text-align: center; /* Zentrierter Text */
+        }
+
         /* Vorheriges CSS bleibt unverändert */
         body {
             background-color: var(--background-color);
@@ -140,33 +171,6 @@
             padding: 20px;
             box-shadow: var(--shadow);
             transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            text-align: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .stat-item {
-            flex: 1;
-            min-width: 120px;
-        }
-
-        .stat-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary-color);
-            margin: 10px 0;
-            transition: color 0.3s ease;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            color: var(--secondary-text-color);
-            transition: color 0.3s ease;
         }
 
         /* Neues CSS für die Header-Bereiche */
@@ -290,6 +294,13 @@
             line-height: 1.6;
         }
 
+        .additional-info {
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--secondary-text-color);
+            transition: color 0.3s ease;
+        }
+
         .sources {
             font-size: 14px;
             color: var(--secondary-text-color);
@@ -310,9 +321,16 @@
 <body>
     <div class="container">
         <div class="card">
-            <h2>Statistik über deine Anfragen</h2>
-            <div class="stats" id="stats-container">
-                <!-- Will be populated by JavaScript -->
+            <div class="section-header">
+                <h2>Metadaten</h2>
+            </div>
+            <div class="criteria-container">
+                <div class="criteria-scroll" id="metadataContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="additional-info" id="additional-info">
+                <!-- Additional info will be populated by JavaScript -->
             </div>
         </div>
 
@@ -379,6 +397,11 @@
                         --button-hover: #0056b3;
                         --button-text: #ffffff;
                         --shadow-color: rgba(0, 0, 0, 0.1);
+                        --background-color: #ffffff;
+                        --text-color: #000000;
+                        --border-radius: 12px;
+                        --transition-speed: 0.3s;
+                        --button-border: 2px solid transparent; /* Transparente Umrandung im Light-Mode */
                     }
 
                     :host(.dark-mode) {
@@ -386,6 +409,9 @@
                         --button-hover: #4a5568;
                         --button-text: #ffffff;
                         --shadow-color: rgba(255, 255, 255, 0.1);
+                        --background-color: #1a1a1a;
+                        --text-color: #ffffff;
+                        --button-border: 2px solid #ffffff; /* Weiße Umrandung im Dark-Mode */
                     }
 
                     .container {
@@ -393,7 +419,7 @@
                         z-index: 10000;
                         display: flex;
                         gap: 10px;
-                        transition: transform 0.3s ease, opacity 0.3s ease;
+                        transition: transform var(--transition-speed) ease, opacity var(--transition-speed) ease;
                     }
 
                     .vertical {
@@ -413,7 +439,7 @@
                     .hidden {
                         opacity: 0.5;
                         pointer-events: none;
-                        transition: transform 0.3s ease, opacity 0.3s ease;
+                        transition: transform var(--transition-speed) ease, opacity var(--transition-speed) ease;
                     }
 
                     .hidden.left {
@@ -431,28 +457,30 @@
                     .button {
                         all: unset;
                         display: inline-block;
-                        padding: 10px 15px;
+                        padding: 12px 20px;
                         font-size: 14px;
-                        font-family: Arial, sans-serif;
+                        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
                         color: var(--button-text);
                         background-color: var(--button-bg);
-                        border-radius: 8px;
+                        border-radius: var(--border-radius);
                         cursor: pointer;
                         text-align: center;
                         user-select: none;
                         white-space: nowrap;
                         box-shadow: 0 4px 6px var(--shadow-color);
-                        transition: background-color 0.2s, transform 0.2s;
+                        transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+                        border: var(--button-border); /* Umrandung verwenden */
                     }
 
                     .button:hover {
                         background-color: var(--button-hover);
                         transform: scale(1.05);
+                        box-shadow: 0 6px 8px var(--shadow-color);
                     }
 
                     .button:active {
-                        transform: none;
-                        background-color: var(--button-bg);
+                        transform: scale(0.98);
+                        box-shadow: 0 3px 5px var(--shadow-color);
                     }
 
                     .toggle {
@@ -468,6 +496,19 @@
                         cursor: pointer;
                         box-shadow: 0 4px 6px var(--shadow-color);
                         font-size: 22px;
+                        transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+                        border: var(--button-border); /* Umrandung für Toggle-Buttons */
+                    }
+
+                    .toggle:hover {
+                        background-color: var(--button-hover);
+                        transform: scale(1.1);
+                        box-shadow: 0 6px 8px var(--shadow-color);
+                    }
+
+                    .toggle:active {
+                        transform: scale(0.95);
+                        box-shadow: 0 3px 5px var(--shadow-color);
                     }
 
                     .toggle.left {
@@ -584,7 +625,7 @@
                 { class: 'horizontal', style: '', toggleClass: 'bottom' },
                 { class: 'vertical', style: 'right: 20px;', toggleClass: 'right' }
             ];
-            let currentPosition = 0;
+            let currentPosition = 1;
             let isVisible = true;
 
             const updatePosition = () => {
@@ -796,25 +837,6 @@
             }
         }
 
-        // Bisherige Funktionen bleiben unverändert
-        function populateStats() {
-            const statsContainer = document.getElementById('stats-container');
-            statsContainer.innerHTML = `
-                <div class="stat-item">
-                    <div class="stat-number">${appData.stats.previous}</div>
-                    <div class="stat-label">Bisherige Anfragen</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">${appData.stats.lastHour}</div>
-                    <div class="stat-label">In der letzten Stunde</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">${appData.stats.remaining}</div>
-                    <div class="stat-label">Heute verbleibende Anfragen</div>
-                </div>
-            `;
-        }
-
         function populateQuestion() {
             const questionContainer = document.getElementById('question-container');
             questionContainer.textContent = appData.currentQuestion;
@@ -840,7 +862,18 @@
             `).join('');
         }
 
+        // Bisherige Funktionen bleiben unverändert
+        function populateStats() {
+            const additionalInfoContainer = document.getElementById('additional-info');
+            if (appData.additionalInfo) {
+                additionalInfoContainer.innerHTML = appData.additionalInfo;
+            } else {
+                additionalInfoContainer.innerHTML = '';
+            }
+        }
+
         function initializePage() {
+            renderCriteria('metadataContainer', metadataInfo);
             populateStats();
             populateQuestion();
             populateResult();
