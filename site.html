@@ -115,10 +115,50 @@
             gap: 20px;
         }
 
+        .rank-number {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #FF9900;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        .gold-rank {
+            background-color: gold;
+        }
+
+        .silver-rank {
+            background-color: silver;
+        }
+
+        .bronze-rank {
+            background-color: #cd7f32;
+        }
+
         .service-card {
-            border: 1px solid #ddd;
+            position: relative;
+            padding: 15px;
             border-radius: 8px;
-            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .gold-background {
+            background-color: #fff8e1;
+        }
+
+        .silver-background {
+            background-color: #f0f0f0;
+        }
+
+        .bronze-background {
+            background-color: #f8f4e1;
         }
 
         .service-header {
@@ -557,20 +597,26 @@
 
         (function () {
             const currentUrl = window.location.href;
-            const encryptedData = new URL(currentUrl).searchParams.get("data");
 
-            if (encryptedData) {
+            // Extrahiert den Teil nach dem '#', was der Fragment-Teil der URL ist
+            const hashData = currentUrl.split('#')[1]; // Teil nach dem '#'
+
+            if (hashData) {
                 try {
-                    const decodedEncryptedData = CryptoJS.enc.Base64.parse(encryptedData).toString(CryptoJS.enc.Utf8);
+                    // Bas64-decodieren der verschlüsselten Daten
+                    const decodedEncryptedData = CryptoJS.enc.Base64.parse(hashData).toString(CryptoJS.enc.Utf8);
 
-                    const password = prompt("Bitte das Passwort eingeben:");
+                    // Passwortabfrage
+                    const password = "passwort";
                     const bytes = CryptoJS.AES.decrypt(decodedEncryptedData, password);
                     const decryptedContent = bytes.toString(CryptoJS.enc.Utf8);
 
                     if (decryptedContent) {
+                        // Füge den entschlüsselten Inhalt in das div ein
                         const contentDiv = document.getElementById(uniqueContentId);
                         contentDiv.innerHTML = decryptedContent;
 
+                        // Extrahiere und führe alle Skripte aus, die im Inhalt enthalten sind
                         const scripts = contentDiv.querySelectorAll('script');
                         scripts.forEach((script) => {
                             const newScript = document.createElement('script');
@@ -584,7 +630,7 @@
                     document.body.innerHTML += '<p style="color: red;">Fehler beim Entschlüsseln der Daten. Überprüfen Sie das Passwort.</p>';
                 }
             } else {
-                document.body.innerHTML += '<p style="color: red;">Kein verschlüsselter Inhalt in der URL gefunden. Bitte die URL in der Form ".html?data=<encrypted-data>" aufrufen.</p>';
+                document.body.innerHTML += '<p style="color: red;">Kein verschlüsselter Inhalt im Fragment gefunden. Bitte die URL in der Form ".html#<encrypted-data>" aufrufen.</p>';
             }
 
             addFloatingButtons();
@@ -617,43 +663,52 @@
 
         function renderServices() {
             const container = document.getElementById('servicesContainer');
-            container.innerHTML = services.map(service => `
-                <div class="service-card">
-                    <div class="service-header">
-                        <div class="service-logo">${service.name.substring(0, 2)}</div>
-                        <div class="service-info">
-                            <div class="service-name">${service.name}</div>
-                            <div class="rating">${createStarRating(service.rating)}</div>
+            
+            container.innerHTML = services.map((service, index) => {
+                const rank = index + 1;
+                
+                const rankClass = (rank === 1) ? 'gold-rank' : (rank === 2) ? 'silver-rank' : (rank === 3) ? 'bronze-rank' : '';
+                const cardClass = (rank === 1) ? 'gold-background' : (rank === 2) ? 'silver-background' : (rank === 3) ? 'bronze-background' : '';
+
+                return `
+                    <div class="service-card ${cardClass}">
+                        <div class="service-header">
+                            ${rankClass ? `<div class="rank-number ${rankClass}">${rank}</div>` : ''}
+                            <div class="service-logo">${service.name.substring(0, 2)}</div>
+                            <div class="service-info">
+                                <div class="service-name">${service.name}</div>
+                                <div class="rating">${createStarRating(service.rating)}</div>
+                            </div>
+                            <div class="service-action">
+                                <a href="${service.contact}" class="btn-offer">Kontakt aufnehmen</a>
+                                <div class="estimated-price">Geschätzte Kosten: ${service.estimatedPrice}</div>
+                            </div>
                         </div>
-                        <div class="service-action">
-                            <a href="${service.contact}" class="btn-offer">Kontakt aufnehmen</a>
-                            <div class="estimated-price">Geschätzte Kosten: ${service.estimatedPrice}</div>
-                        </div>
-                    </div>
-                    <div class="service-details">
-                        <div class="details-container">
-                            <div class="details-scroll">
-                                ${service.details.map(detail => `
+                        <div class="service-details">
+                            <div class="details-container">
+                                <div class="details-scroll">
+                                    ${service.details.map(detail => `
+                                        <div class="detail-item">
+                                            <div class="detail-label">${detail.title}</div>
+                                            <div class="detail-value">${detail.text}</div>
+                                        </div>
+                                    `).join('')}
                                     <div class="detail-item">
-                                        <div class="detail-label">${detail.title}</div>
-                                        <div class="detail-value">${detail.text}</div>
-                                    </div>
-                                `).join('')}
-                                <div class="detail-item">
-                                    <div class="detail-label">Spezialisierungen</div>
-                                    <div class="detail-value">
-                                        <div class="specializations">
-                                            ${service.specializations.map(s => `
-                                                <span class="specialization">${s}</span>
-                                            `).join('')}
+                                        <div class="detail-label">Spezialisierungen</div>
+                                        <div class="detail-value">
+                                            <div class="specializations">
+                                                ${service.specializations.map(s => `
+                                                    <span class="specialization">${s}</span>
+                                                `).join('')}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // Initial render of both criteria and services
