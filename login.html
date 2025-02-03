@@ -56,6 +56,10 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
+        .hidden {
+            display: none;
+        }
+
         /* Neue Styles für die Kriterien */
         .criteria-container {
             overflow-x: auto;
@@ -293,9 +297,9 @@
     <div class="container">
         <div class="card">
             <div class="section-header">
-                <h2>Metadaten</h2>
+                <h2 onclick="toggleVisibility('metadataCriteria-div')">Metadaten</h2>
             </div>
-            <div class="criteria-container">
+            <div class="criteria-container" id="metadataCriteria-div">
                 <div class="criteria-scroll" id="metadataContainer">
                     <!-- Will be populated by JavaScript -->
                 </div>
@@ -307,38 +311,41 @@
 
         <div class="card">
             <div class="section-header">
-                <h2>Deine Frage</h2>
+                <h2 onclick="toggleVisibility('questionCriteria-div')">Deine Frage</h2>
+                <button class="copy-button" onclick="copyContent('question-container', this)">
+                    Kopieren
+                </button>
             </div>
-            <div id="question-container" class="question-text">
-                <!-- Will be populated by JavaScript -->
-            </div>
-            <div class="criteria-container">
+            <div class="criteria-container" id="questionCriteria-div">
                 <div class="criteria-scroll" id="questionCriteriaContainer">
                     <!-- Will be populated by JavaScript -->
                 </div>
             </div>
+            <div id="question-container" class="question-text">
+                <!-- Will be populated by JavaScript -->
+            </div>
         </div>
 
         <div class="card">
             <div class="section-header">
-                <h2>Dein Ergebnis</h2>
+                <h2 onclick="toggleVisibility('resultCriteria-div')">Dein Ergebnis</h2>
                 <button class="copy-button" onclick="copyContent('result-container', this)">
                     Kopieren
                 </button>
             </div>
-            <div id="result-container" class="result-text">
-                <!-- Will be populated by JavaScript -->
-            </div>
-            <div class="criteria-container">
+            <div class="criteria-container" id="resultCriteria-div">
                 <div class="criteria-scroll" id="resultCriteriaContainer">
                     <!-- Will be populated by JavaScript -->
                 </div>
+            </div>
+            <div id="result-container" class="result-text">
+                <!-- Will be populated by JavaScript -->
             </div>
         </div>
 
         <div class="card">
             <div class="section-header">
-                <h2>Quellen</h2>
+                <h2 onclick="toggleVisibility('sources-container')">Quellen</h2>
                 <button class="copy-button" onclick="copyContent('sources-container', this)">
                     Kopieren
                 </button>
@@ -351,6 +358,18 @@
     <!-- Dynamischer Inhalt -->
     <div id="dynamicContent"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
+    <script>
+        function toggleVisibility(contentId) {
+            var content = document.getElementById(contentId);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+            } else {
+                content.classList.add('hidden');
+            }
+        }
+
+        toggleVisibility('metadataCriteria-div');
+    </script>
     <script>
         (function() {
             const menuContainer = document.createElement('div');
