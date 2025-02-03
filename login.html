@@ -297,20 +297,6 @@
     <div class="container">
         <div class="card">
             <div class="section-header">
-                <h2 onclick="toggleVisibility('metadataCriteria-div')">Metadaten</h2>
-            </div>
-            <div class="criteria-container" id="metadataCriteria-div">
-                <div class="criteria-scroll" id="metadataContainer">
-                    <!-- Will be populated by JavaScript -->
-                </div>
-            </div>
-            <div class="additional-info" id="additional-info">
-                <!-- Additional info will be populated by JavaScript -->
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="section-header">
                 <h2 onclick="toggleVisibility('questionCriteria-div')">Deine Frage</h2>
                 <button class="copy-button" onclick="copyContent('question-container', this)">
                     Kopieren
@@ -323,6 +309,9 @@
             </div>
             <div id="question-container" class="question-text">
                 <!-- Will be populated by JavaScript -->
+            </div>
+            <div class="additional-info" id="additional-info">
+                <!-- Additional info will be populated by JavaScript -->
             </div>
         </div>
 
@@ -345,10 +334,15 @@
 
         <div class="card">
             <div class="section-header">
-                <h2 onclick="toggleVisibility('sources-container')">Quellen</h2>
+                <h2 onclick="toggleVisibility('metadataCriteria-div')">Quellen</h2>
                 <button class="copy-button" onclick="copyContent('sources-container', this)">
                     Kopieren
                 </button>
+            </div>
+            <div class="criteria-container" id="metadataCriteria-div">
+                <div class="criteria-scroll" id="metadataContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
             </div>
             <div id="sources-container" class="sources">
                 <!-- Will be populated by JavaScript -->
@@ -368,9 +362,9 @@
             }
         }
 
-        toggleVisibility('metadataCriteria-div');
         toggleVisibility('questionCriteria-div');
         toggleVisibility('resultCriteria-div');
+        toggleVisibility('metadataCriteria-div');
     </script>
     <script>
         (function() {
@@ -514,6 +508,9 @@
                     <div class="menu-item" id="blog-link">
                         <span>📝</span> Blog
                     </div>
+                    <div class="menu-item" id="feedback-mail">
+                        <span>📧</span> Feedback
+                    </div>
                 </div>
             `;
 
@@ -528,6 +525,7 @@
             const shareButton = menuContainer.querySelector('#share-button');
             const moreCreations = menuContainer.querySelector('#more-creations');
             const blogLink = menuContainer.querySelector('#blog-link');
+            const feedbackMail = menuContainer.querySelector('#feedback-mail');
 
             // Toggle menu function
             function toggleMenu() {
@@ -561,22 +559,43 @@
                 toggleMenu();
             });
 
-            // Share functionality (placeholder)
+            // Share functionality
             shareButton.addEventListener('click', () => {
-                alert('placeholder');
+                alert(shareable_url);
                 toggleMenu();
             });
 
             // More creations link
             moreCreations.addEventListener('click', () => {
-                window.open('', '_blank');
+                window.open('placeholder', '_blank');
                 toggleMenu();
             });
 
             // Blog link
             blogLink.addEventListener('click', () => {
-                window.open('', '_blank');
+                window.open('placeholder', '_blank');
                 toggleMenu();
+            });
+
+            feedbackMail.addEventListener('click', () => {
+                const textToCopy = JSON.stringify(metadataInfo);
+
+                const currentDate = new Date();
+                const formattedDate = currentDate.toLocaleString('de-DE', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => {
+                        const mailtoLink = `mailto:?subject=${encodeURIComponent("Feedback" + ' - ' + formattedDate)}&body=${encodeURIComponent("Nachricht:" + "\n\nAnalysedaten: " + textToCopy)}`;
+                        window.location.href = mailtoLink;
+                    })
+                    .catch((err) => alert("Fehler beim Kopieren: " + err));
             });
 
             // Check system preference initially
