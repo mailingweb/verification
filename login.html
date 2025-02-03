@@ -369,6 +369,8 @@
         }
 
         toggleVisibility('metadataCriteria-div');
+        toggleVisibility('questionCriteria-div');
+        toggleVisibility('resultCriteria-div');
     </script>
     <script>
         (function() {
@@ -678,6 +680,7 @@
                 // Visual feedback
                 button.textContent = '✓ Kopiert';
                 button.classList.add('copy-success');
+                button.blur();
                 
                 // Reset button after 2 Sekunden
                 setTimeout(() => {
@@ -687,6 +690,7 @@
             } catch (err) {
                 console.error('Failed to copy text: ', err);
                 button.textContent = '✗ Fehler';
+                button.blur();
                 setTimeout(() => {
                     button.textContent = 'Kopieren';
                 }, 2000);
