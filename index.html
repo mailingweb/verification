@@ -3,259 +3,583 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic HTML Loader</title>
+    <title>Lern App</title>
+    <style>
+        /* Vorheriges CSS bleibt bestehen */
+        :root {
+            --primary-color: #3498db;
+            --background-color: #f5f6fa;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+            --secondary-text-color: #666666;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --button-hover: #f0f0f0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary-color: #5dade2;
+                --background-color: #1a1a1a;
+                --card-background: #2c2c2c;
+                --text-color: #e0e0e0;
+                --secondary-text-color: #b0b0b0;
+                --shadow: 0 2px 10px rgba(0,0,0,0.3);
+                --button-hover: #3c3c3c;
+            }
+        }
+
+        [data-theme="light"] {
+            --primary-color: #3498db;
+            --background-color: #f5f6fa;
+            --card-background: #ffffff;
+            --text-color: #2c3e50;
+            --secondary-text-color: #666666;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --button-hover: #f0f0f0;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #5dade2;
+            --background-color: #1a1a1a;
+            --card-background: #2c2c2c;
+            --text-color: #e0e0e0;
+            --secondary-text-color: #b0b0b0;
+            --shadow: 0 2px 10px rgba(0,0,0,0.3);
+            --button-hover: #3c3c3c;
+        }
+
+        /* Bisheriges CSS bleibt bestehen */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Neue Styles für die Kriterien */
+        .criteria-container {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+            margin: 15px 0;
+            -webkit-overflow-scrolling: touch;
+            
+            /* Hide scrollbar for Chrome, Safari and Opera */
+            &::-webkit-scrollbar {
+                display: none;
+            }
+            
+            /* Hide scrollbar for IE, Edge and Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        .criteria-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .criteria-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .criteria-container::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        .criteria-scroll {
+            display: inline-flex;
+            gap: 20px;
+            padding: 0 10px;
+        }
+
+        .criteria-item {
+            background: var(--card-background);
+            border: 1px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 8px;
+            min-width: 200px;
+            max-width: 200px;
+            transition: background-color 0.3s ease;
+        }
+
+        .criteria-label {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .criteria-value {
+            font-size: 14px;
+            color: var(--secondary-text-color);
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+        /* Vorheriges CSS bleibt unverändert */
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding-bottom: 40px;
+        }
+
+        .card {
+            background: var(--card-background);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Neues CSS für die Header-Bereiche */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .copy-button {
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .copy-button:hover {
+            background: var(--button-hover);
+        }
+
+        .copy-button:active {
+            transform: scale(0.98);
+        }
+
+        .copy-success {
+            background-color: #2ecc71;
+            color: white;
+            border-color: #2ecc71;
+        }
+
+        /* Absatz */
+        p {
+            margin-bottom: 1rem;
+        }
+
+        /* Überschriften */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            line-height: 1.3;
+        }
+
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.75rem; }
+        h3 { font-size: 1.5rem; }
+        h4 { font-size: 1.25rem; }
+        h5 { font-size: 1.1rem; }
+        h6 { font-size: 1rem; }
+
+        /* Listen */
+        ul, ol {
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Links */
+        a {
+            color: #0077cc;
+            text-decoration: none;
+            transition: color 0.2s ease-in-out;
+        }
+
+        a:hover {
+            color: #005fa3;
+            text-decoration: underline;
+        }
+
+        /* Blockquotes */
+        blockquote {
+            border-left: 4px solid #0077cc;
+            padding-left: 1rem;
+            font-style: italic;
+            color: #666;
+            margin: 1rem 0;
+        }
+
+        /* Code */
+        code {
+            font-family: 'Courier New', monospace;
+            background-color: #eee;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                font-size: 15px;
+            }
+            
+            h1 { font-size: 1.75rem; }
+            h2 { font-size: 1.5rem; }
+            h3 { font-size: 1.25rem; }
+        }
+
+        h2 {
+            margin-bottom: 0;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .result-text {
+            line-height: 1.6;
+        }
+
+        .additional-info {
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--secondary-text-color);
+            transition: color 0.3s ease;
+            text-align: center;
+            padding-left: 50px;
+            padding-right: 50px;
+        }
+
+        .sources {
+            font-size: 14px;
+            color: var(--secondary-text-color);
+            transition: color 0.3s ease;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .stat-item {
+                min-width: 100px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div class="card">
+            <div class="section-header">
+                <h2 onclick="toggleVisibility('questionCriteria-div')">Deine Frage</h2>
+                <button class="copy-button" onclick="copyContent('question-container', this)">
+                    Kopieren
+                </button>
+            </div>
+            <div class="criteria-container" id="questionCriteria-div">
+                <div class="criteria-scroll" id="questionCriteriaContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            <div id="question-container" class="question-text">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            <div class="additional-info" id="additional-info">
+                <!-- Additional info will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-header">
+                <h2 onclick="toggleVisibility('resultCriteria-div')">Dein Ergebnis</h2>
+                <button class="copy-button" onclick="copyContent('result-container', this)">
+                    Kopieren
+                </button>
+            </div>
+            <div class="criteria-container" id="resultCriteria-div">
+                <div class="criteria-scroll" id="resultCriteriaContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            <div id="result-container" class="result-text">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-header">
+                <h2 onclick="toggleVisibility('metadataCriteria-div')">Quellen</h2>
+                <button class="copy-button" onclick="copyContent('sources-container', this)">
+                    Kopieren
+                </button>
+            </div>
+            <div class="criteria-container" id="metadataCriteria-div">
+                <div class="criteria-scroll" id="metadataContainer">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+            <div id="sources-container" class="sources">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
     <!-- Dynamischer Inhalt -->
     <div id="dynamicContent"></div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.js"></script>
     <script>
-        const uniqueContentId = 'dynamicContent';
-        const floatingContainerId = 'floatingButtonsContainer';
+        function toggleVisibility(contentId) {
+            var content = document.getElementById(contentId);
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+            } else {
+                content.classList.add('hidden');
+            }
+        }
 
-        function addFloatingButtons() {
-            const floatingContainer = document.createElement('div');
-            floatingContainer.id = floatingContainerId;
+        toggleVisibility('questionCriteria-div');
+        toggleVisibility('resultCriteria-div');
+        toggleVisibility('metadataCriteria-div');
+    </script>
+    <script>
+        (function() {
+            const menuContainer = document.createElement('div');
+            menuContainer.id = 'modern-dropdown-container';
+            
+            const styles = document.createElement('style');
+            styles.textContent = `
+                #modern-dropdown-container {
+                    --button-bg: #2563eb;
+                    --button-hover: #1d4ed8;
+                    --menu-bg: rgba(255, 255, 255, 0.8);
+                    --menu-bg-dark: rgba(50, 50, 50, 0.8);
+                    --text-light: #ffffff;
+                    --text-dark: #1f2937;
+                }
 
-            const shadowRoot = floatingContainer.attachShadow({ mode: 'open' });
+                .menu-toggle-btn {
+                    position: fixed;
+                    bottom: 24px;
+                    right: 24px;
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 50%;
+                    background: var(--button-bg);
+                    border: none;
+                    color: var(--text-light);
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                    z-index: 1000;
+                    transition: transform 0.3s ease, background-color 0.3s ease;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                }
 
-            shadowRoot.innerHTML = `
-                <style>
-                    .container {
-                        position: fixed;
-                        z-index: 10000;
-                        display: flex;
-                        gap: 10px;
-                        transition: transform 0.3s ease, opacity 0.3s ease;
-                    }
+                .menu-toggle-btn:hover {
+                    background: var(--button-hover);
+                    transform: scale(1.05);
+                }
 
-                    .vertical {
-                        flex-direction: column;
-                        top: 20px;
-                        height: auto;
-                    }
+                .backdrop {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.3);
+                    backdrop-filter: blur(8px);
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: opacity 0.3s ease;
+                    z-index: 999;
+                }
 
-                    .horizontal {
-                        flex-direction: row;
-                        bottom: 20px;
-                        left: 50%;
-                        transform: translateX(-50%);
-                        width: auto;
-                    }
+                .backdrop.active {
+                    opacity: 1;
+                    visibility: visible;
+                }
 
-                    .hidden {
-                        opacity: 0.5;
-                        pointer-events: none;
-                        transition: transform 0.3s ease, opacity 0.3s ease;
-                    }
+                .dropdown-menu {
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) scale(0.9);
+                    background: var(--menu-bg);
+                    backdrop-filter: blur(12px);
+                    padding: 16px;
+                    border-radius: 16px;
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: all 0.3s ease;
+                    z-index: 1000;
+                    min-width: 280px;
+                }
 
-                    .hidden.left {
-                        transform: translateX(-150%);
-                    }
+                .dropdown-menu.active {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translate(-50%, -50%) scale(1);
+                }
 
-                    .hidden.right {
-                        transform: translateX(150%);
-                    }
+                .menu-item {
+                    padding: 12px 16px;
+                    margin: 8px 0;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    color: var(--text-dark);
+                    background: rgba(255, 255, 255, 0.5);
+                }
 
-                    .hidden.bottom {
-                        transform: translateY(200%);
-                    }
+                .menu-item:hover {
+                    background: rgba(255, 255, 255, 0.8);
+                    transform: translateX(4px);
+                }
 
-                    .button {
-                        all: unset;
-                        display: inline-block;
-                        padding: 10px 15px;
-                        font-size: 14px;
-                        font-family: Arial, sans-serif;
-                        color: #ffffff;
-                        background-color: #007bff;
-                        border-radius: 8px;
-                        cursor: pointer;
-                        text-align: center;
-                        user-select: none;
-                        white-space: nowrap;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                        transition: background-color 0.2s, transform 0.2s;
-                    }
+                /* Dark mode specific styles */
+                body.dark-mode .dropdown-menu {
+                    background: var(--menu-bg-dark);
+                }
 
-                    .button:hover {
-                        background-color: #0056b3;
-                        transform: scale(1.05);
-                    }
+                body.dark-mode .menu-item {
+                    color: var(--text-light);
+                    background: rgba(0, 0, 0, 0.2);
+                }
 
-                    .button:active {
-                        transform: none;
-                        background-color: #007bff;
-                    }
+                body.dark-mode .menu-item:hover {
+                    background: rgba(0, 0, 0, 0.3);
+                }
 
-                    .toggle {
-                        position: fixed;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        width: 40px;
-                        height: 40px;
-                        background-color: #007bff;
-                        color: white;
-                        border-radius: 50%;
-                        cursor: pointer;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                        font-size: 22px;
-                    }
-
-                    .toggle.left {
-                        left: 10px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                    }
-
-                    .toggle.right {
-                        right: 10px;
-                        top: 50%;
-                        transform: translateY(-50%);
-                    }
-
-                    .toggle.bottom {
-                        right: 10px;
-                        bottom: 0;
-                        transform: translateY(-50%);
-                    }
-
-                    /* Mobile Ansicht: Buttons verstecken und Dropdown-Menü aktivieren */
-                    @media (max-width: 768px) {
-                        .container {
-                            display: none; /* Buttons initial verstecken */
-                        }
-
-                        .container.show {
-                            display: block; /* Buttons anzeigen, wenn die Klasse "show" hinzugefügt wird */
-                        }
-
-                        .toggle {
-                            display: flex; /* Toggle-Button sichtbar lassen */
-                        }
-
-                        .button {
-                            display: block; /* Buttons als Block-Elemente anzeigen */
-                            width: 100%; /* Vollbreite für Dropdown-Menü */
-                            text-align: left;
-                            margin-bottom: 10px; /* Mehr Abstand zwischen den Buttons im Dropdown */
-                        }
-
-                        .container.right {
-                            margin-right: 20px; /* 20px Abstand vom rechten Rand */
-                        }
-                    }
-
-                </style>
-
-                <div class="container vertical" id="buttonContainer">
-                    <button class="button" id="printButton">Drucken</button>
-                    <button class="button" id="copyButton">In Zwischenablage kopieren</button>
-                    <button class="button" id="emailButton">Per E-Mail senden</button>
-                    <button class="button" id="positionButton">Position wechseln</button>
-                </div>
-                <div class="toggle left" id="toggleButton">☰</div>
-            `;
-
-            document.body.appendChild(floatingContainer);
-
-            const buttonContainer = shadowRoot.getElementById('buttonContainer');
-            const toggleButton = shadowRoot.getElementById('toggleButton');
-            const printButton = shadowRoot.getElementById('printButton');
-            const copyButton = shadowRoot.getElementById('copyButton');
-            const emailButton = shadowRoot.getElementById('emailButton');
-            const positionButton = shadowRoot.getElementById('positionButton');
-
-            const positions = [
-                { class: 'vertical', style: 'left: 20px;', toggleClass: 'left' },
-                { class: 'horizontal', style: '', toggleClass: 'bottom' },
-                { class: 'vertical', style: 'right: 20px;', toggleClass: 'right' }
-            ];
-            let currentPosition = 0;
-            let isVisible = true;
-
-            const updatePosition = () => {
-                const { class: positionClass, style, toggleClass } = positions[currentPosition];
-                buttonContainer.className = `container ${positionClass}`;
-                buttonContainer.style.cssText = style;
-                toggleButton.className = `toggle ${toggleClass}`;
-            };
-
-            toggleButton.addEventListener('click', () => {
-                isVisible = !isVisible;
-
-                // Mobile Ansicht: Dropdown-Menü umschalten
-                if (window.innerWidth <= 768) {
-                    buttonContainer.classList.toggle('show');
-                } else {
-                    // Bestehendes Verhalten für größere Bildschirme (Desktop)
-                    if (!isVisible) {
-                        if (currentPosition === 0) {
-                            buttonContainer.classList.add('hidden', 'left');
-                        } else if (currentPosition === 1) {
-                            buttonContainer.classList.add('hidden', 'bottom');
-                        } else if (currentPosition === 2) {
-                            buttonContainer.classList.add('hidden', 'right');
-                        }
-                    } else {
-                        buttonContainer.classList.remove('hidden', 'left', 'bottom', 'right');
+                /* Mobile responsiveness */
+                @media (max-width: 768px) {
+                    .dropdown-menu {
+                        width: 90%;
+                        max-width: 320px;
                     }
                 }
+            `;
+
+            document.head.appendChild(styles);
+
+            menuContainer.innerHTML = `
+                <button class="menu-toggle-btn">☰</button>
+                <div class="backdrop"></div>
+                <div class="dropdown-menu">
+                    <div class="menu-item" id="theme-toggle">
+                        <span class="theme-icon">🌓</span> Hell/Dunkel
+                    </div>
+                    <div class="menu-item" id="share-button">
+                        <span>🔗</span> Teilen
+                    </div>
+                    <div class="menu-item" id="more-creations">
+                        <span>✨</span> Weitere Kreationen
+                    </div>
+                    <div class="menu-item" id="blog-link">
+                        <span>📝</span> Blog
+                    </div>
+                    <div class="menu-item" id="feedback-mail">
+                        <span>📧</span> Feedback
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(menuContainer);
+
+            // Get DOM elements
+            const toggleBtn = menuContainer.querySelector('.menu-toggle-btn');
+            const backdrop = menuContainer.querySelector('.backdrop');
+            const dropdownMenu = menuContainer.querySelector('.dropdown-menu');
+            const themeToggle = menuContainer.querySelector('#theme-toggle');
+            const themeIcon = menuContainer.querySelector('.theme-icon');
+            const shareButton = menuContainer.querySelector('#share-button');
+            const moreCreations = menuContainer.querySelector('#more-creations');
+            const blogLink = menuContainer.querySelector('#blog-link');
+            const feedbackMail = menuContainer.querySelector('#feedback-mail');
+
+            // Toggle menu function
+            function toggleMenu() {
+                backdrop.classList.toggle('active');
+                dropdownMenu.classList.toggle('active');
+            }
+
+            // Event listeners
+            toggleBtn.addEventListener('click', toggleMenu);
+            backdrop.addEventListener('click', toggleMenu);
+
+            // Theme toggle functionality
+            let isDarkMode = localStorage.getItem('darkMode') === 'true';
+            
+            // Initial theme setup
+            if (isDarkMode) {
+                document.body.classList.add('dark-mode');
+                themeIcon.textContent = '🌞';
+            }
+
+            function toggleThemeMenu() {
+                isDarkMode = !isDarkMode;
+                document.body.classList.toggle('dark-mode');
+                localStorage.setItem('darkMode', isDarkMode);
+                themeIcon.textContent = isDarkMode ? '🌞' : '🌓';
+            }
+
+            themeToggle.addEventListener('click', () => {
+                toggleThemeMenu()
+                toggleTheme();
+                toggleMenu();
             });
 
-            positionButton.addEventListener('click', () => {
-                currentPosition = (currentPosition + 1) % positions.length;
-                updatePosition();
+            // Share functionality
+            shareButton.addEventListener('click', () => {
+                alert(shareable_url);
+                toggleMenu();
             });
 
-            updatePosition();
-
-            printButton.addEventListener('click', () => {
-                const contentDiv = document.getElementById(uniqueContentId);
-                const printWindow = window.open("", "_blank");
-
-                printWindow.document.open();
-                printWindow.document.write(`
-                    <!DOCTYPE html>
-                    <html lang="de">
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>🖨</title>
-                        <style>
-                            body {
-                                font-family: Arial, sans-serif;
-                                margin: 2cm;
-                            }
-                        </style>
-                    </head>
-                    <body>${contentDiv.innerHTML}</body>
-                    </html>
-                `);
-                printWindow.document.close();
-                printWindow.onload = () => {
-                    printWindow.focus();
-                    printWindow.print();
-                    printWindow.close();
-                };
+            // More creations link
+            moreCreations.addEventListener('click', () => {
+                window.open('placeholder', '_blank');
+                toggleMenu();
             });
 
-            copyButton.addEventListener('click', () => {
-                const contentDiv = document.getElementById(uniqueContentId);
-                const textToCopy = contentDiv.innerText || contentDiv.textContent;
-
-                navigator.clipboard.writeText(textToCopy)
-                    .then(() => alert("Der Inhalt wurde erfolgreich in die Zwischenablage kopiert!"))
-                    .catch((err) => alert("Fehler beim Kopieren: " + err));
+            // Blog link
+            blogLink.addEventListener('click', () => {
+                window.open('placeholder', '_blank');
+                toggleMenu();
             });
 
-            emailButton.addEventListener('click', () => {
-                const contentDiv = document.getElementById(uniqueContentId);
-                const textToCopy = contentDiv.innerText || contentDiv.textContent;
+            feedbackMail.addEventListener('click', () => {
+                const textToCopy = JSON.stringify(metadataInfo);
 
-                const firstLine = textToCopy.split('\n')[0];
                 const currentDate = new Date();
                 const formattedDate = currentDate.toLocaleString('de-DE', {
                     day: '2-digit',
@@ -268,25 +592,32 @@
 
                 navigator.clipboard.writeText(textToCopy)
                     .then(() => {
-                        const mailtoLink = `mailto:?subject=${encodeURIComponent(firstLine + ' - ' + formattedDate)}&body=${encodeURIComponent(textToCopy)}`;
+                        const mailtoLink = `mailto:?subject=${encodeURIComponent("Feedback" + ' - ' + formattedDate)}&body=${encodeURIComponent("Nachricht:" + "\n\nAnalysedaten: " + textToCopy)}`;
                         window.location.href = mailtoLink;
                     })
                     .catch((err) => alert("Fehler beim Kopieren: " + err));
             });
 
-            if (window.innerWidth > 768) {
-                toggleButton.click();
+            // Check system preference initially
+            if (localStorage.getItem('darkMode') === null) {
+                isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (isDarkMode) {
+                    document.body.classList.add('dark-mode');
+                    themeIcon.textContent = '🌞';
+                    localStorage.setItem('darkMode', 'true');
+                }
             }
-        }
-
+        })();
+    </script>
+    <script>
+        const uniqueContentId = 'dynamicContent';
         (function () {
             const currentUrl = window.location.href;
-            const encryptedData = new URL(currentUrl).searchParams.get("data");
+            const hashData = currentUrl.split('#')[1];
 
-            if (encryptedData) {
+            if (hashData) {
                 try {
-                    const decodedEncryptedData = CryptoJS.enc.Base64.parse(encryptedData).toString(CryptoJS.enc.Utf8);
-
+                    const decodedEncryptedData = CryptoJS.enc.Base64.parse(hashData).toString(CryptoJS.enc.Utf8);
                     const password = "passwort";
                     const bytes = CryptoJS.AES.decrypt(decodedEncryptedData, password);
                     const decryptedContent = bytes.toString(CryptoJS.enc.Utf8);
@@ -302,17 +633,140 @@
                             document.body.appendChild(newScript);
                         });
                     } else {
-                        alert("Entschlüsselung fehlgeschlagen.");
+                        alert("Entschlüsselung fehlgeschlagen. Falsches Passwort?");
                     }
                 } catch (e) {
-                    document.body.innerHTML += '<p style="color: red;">Fehler beim Entschlüsseln der Daten.</p>';
+                    document.body.innerHTML += '<p style="color: red;">Fehler beim Entschlüsseln der Daten. Überprüfen Sie das Passwort.</p>';
                 }
             } else {
-                document.body.innerHTML += '<p style="color: red;">Kein verschlüsselter Inhalt in der URL gefunden.</p>';
+                document.body.innerHTML += '<p style="color: red;">Kein verschlüsselter Inhalt im Fragment gefunden. Bitte die URL in der Form ".html#<encrypted-data>" aufrufen.</p>';
+            }
+        })();
+    </script>
+    <script>
+        // Theme management bleibt unverändert
+        class ThemeManager {
+            constructor() {
+                this.theme = this.getInitialTheme();
+                this.applyTheme(this.theme);
+                this.setupSystemThemeListener();
             }
 
-            addFloatingButtons();
-        })();
+            getInitialTheme() {
+                const storedTheme = localStorage.getItem('theme');
+                if (storedTheme) {
+                    return storedTheme;
+                }
+                
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    return 'dark';
+                }
+                
+                return 'light';
+            }
+
+            setupSystemThemeListener() {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                    if (!localStorage.getItem('theme')) {
+                        this.theme = e.matches ? 'dark' : 'light';
+                        this.applyTheme(this.theme);
+                    }
+                });
+            }
+
+            toggleTheme() {
+                this.theme = this.theme === 'light' ? 'dark' : 'light';
+                localStorage.setItem('theme', this.theme);
+                this.applyTheme(this.theme);
+            }
+
+            applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+            }
+        }
+
+        // Neue Copy-Funktionalität
+        async function copyContent(elementId, button) {
+            const contentElement = document.getElementById(elementId);
+            const content = contentElement.innerHTML
+                .replace(/<br\s*\/?>/g, '\n') // HTML-Zeilenumbrüche in echte Zeilenumbrüche umwandeln
+                .replace(/<\/p>\s*<p>/g, '\n\n') // Absätze für Textdokumente formatieren
+                .replace(/<[^>]*>/g, ''); // Alle HTML-Tags entfernen
+
+            try {
+                await navigator.clipboard.writeText(content);
+                
+                // Visual feedback
+                button.textContent = '✓ Kopiert';
+                button.classList.add('copy-success');
+                button.blur();
+                
+                // Reset button after 2 Sekunden
+                setTimeout(() => {
+                    button.textContent = 'Kopieren';
+                    button.classList.remove('copy-success');
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                button.textContent = '✗ Fehler';
+                button.blur();
+                setTimeout(() => {
+                    button.textContent = 'Kopieren';
+                }, 2000);
+            }
+        }
+
+        function populateQuestion() {
+            const questionContainer = document.getElementById('question-container');
+            questionContainer.textContent = appData.currentQuestion;
+        }
+
+        function populateResult() {
+            const resultContainer = document.getElementById('result-container');
+            resultContainer.innerHTML = appData.result;
+        }
+
+        function populateSources() {
+            const sourcesContainer = document.getElementById('sources-container');
+            sourcesContainer.innerHTML = appData.sources;
+        }
+
+        function renderCriteria(containerId, criteria) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = criteria.map(criterion => `
+                <div class="criteria-item">
+                    <div class="criteria-label">${criterion.label}</div>
+                    <div class="criteria-value">${criterion.value}</div>
+                </div>
+            `).join('');
+        }
+
+        // Bisherige Funktionen bleiben unverändert
+        function populateStats() {
+            const additionalInfoContainer = document.getElementById('additional-info');
+            try {
+                additionalInfoContainer.innerHTML = additionalInfo;
+            } catch {
+                additionalInfoContainer.innerHTML = '';
+            }
+        }
+
+        function initializePage() {
+            renderCriteria('metadataContainer', metadataInfo);
+            populateStats();
+            populateQuestion();
+            populateResult();
+            populateSources();
+            renderCriteria('questionCriteriaContainer', questionCriteria);
+            renderCriteria('resultCriteriaContainer', resultCriteria);
+        }
+
+        const themeManager = new ThemeManager();
+        document.addEventListener('DOMContentLoaded', initializePage);
+
+        function toggleTheme() {
+            themeManager.toggleTheme();
+        }
     </script>
 </body>
 </html>
